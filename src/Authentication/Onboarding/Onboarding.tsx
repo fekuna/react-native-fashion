@@ -1,34 +1,18 @@
-import React from "react";
-import { View, Text, StyleSheet, ScrollView, Dimensions } from "react-native";
-import Animated from "react-native-reanimated";
-import {
-  useValue,
-  onScrollEvent,
+import React, { useRef } from "react";
+import { View, StyleSheet, Dimensions } from "react-native";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
   interpolateColor,
-} from "react-native-redash/src/v1";
+  useAnimatedScrollHandler,
+  multiply,
+} from "react-native-reanimated";
+
 import Slide, { SLIDE_HEIGHT } from "./Slide";
+import Subslide from "./Subslide";
 
 const BORDER_RADIUS = 75;
 const { width } = Dimensions.get("window");
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "white",
-  },
-  slider: {
-    height: SLIDE_HEIGHT,
-    borderBottomRightRadius: BORDER_RADIUS,
-  },
-  footer: {
-    flex: 1,
-  },
-  footerContent: {
-    flex: 1,
-    backgroundColor: "white",
-    borderTopLeftRadius: BORDER_RADIUS,
-  },
-});
 
 const slides = [
   {
@@ -62,25 +46,56 @@ const slides = [
 ];
 
 const Onboarding = () => {
-  const x = useValue(0);
-  const onScroll = onScrollEvent({ x });
+  const scroll = useRef<Animated.ScrollView>(null);
+  const x = useSharedValue(0);
 
-  const backgroundColor = interpolateColor(x, {
-    inputRange: slides.map((_, i) => i * width),
-    outputRange: slides.map((slide) => slide.color),
+  const rSlideStyles = useAnimatedStyle(() => {
+    const backgroundColor = interpolateColor(
+      x.value,
+      slides.map((_, i) => i * width),
+      slides.map((slide) => slide.color)
+    );
+
+    return {
+      backgroundColor,
+    };
+  });
+
+  const rSlideStyles2 = useAnimatedStyle(() => {
+    const backgroundColor = interpolateColor(
+      x.value,
+      slides.map((_, i) => i * width),
+      slides.map((slide) => slide.color)
+    );
+
+    return {
+      backgroundColor,
+    };
+  });
+
+  const scrollHandler = useAnimatedScrollHandler((event) => {
+    x.value = event.contentOffset.x;
+  });
+
+  const rSubslideStyles = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateX: -x.value }],
+    };
   });
 
   return (
     <View style={styles.container}>
-      <Animated.View style={[styles.slider, { backgroundColor }]}>
+      <Animated.View style={[styles.slider, rSlideStyles]}>
         <Animated.ScrollView
+          ref={scroll}
           horizontal
           snapToInterval={width}
           decelerationRate="fast"
           showsHorizontalScrollIndicator={false}
           bounces={false}
-          scrollEventThrottle={1}
-          {...{ onScroll }}
+          scrollEventThrottle={16}
+          onScroll={scrollHandler}
+          // {...{ onScroll }}
         >
           {slides.map(({ title }, index) => (
             <Slide key={index} right={!!(index % 2)} {...{ title }} />
@@ -88,18 +103,58 @@ const Onboarding = () => {
         </Animated.ScrollView>
       </Animated.View>
       <View style={styles.footer}>
-        <View
-          style={{
-            ...StyleSheet.absoluteFillObject,
-            backgroundColor: "cyan",
-          }}
-        ></View>
-        <View
-          style={{ flex: 1, backgroundColor: "white", borderTopLeftRadius: 75 }}
-        ></View>
+        <Animated.View
+          style={[{ ...StyleSheet.absoluteFillObject }, rSlideStyles2]}
+        />
+        <Animated.View
+          style={[
+            styles.footerContent,
+            {
+              width: width * slides.length,
+              flex: 1,
+            },
+            rSubslideStyles,
+          ]}
+        >
+          {slides.map(({ subtitle, description }, index) => (
+            <Subslide
+              key={index}
+              onPress={() => {
+                if (scroll.current) {
+                  console.log({ scrollTo: width * index });
+                  scroll.current.getNode().scrollTo({
+                    x: width * (index + 1),
+                    animated: true,
+                  });
+                }
+              }}
+              last={index === slides.length - 1}
+              {...{ subtitle, description }}
+            />
+          ))}
+        </Animated.View>
       </View>
     </View>
   );
 };
 
 export default Onboarding;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "white",
+  },
+  slider: {
+    height: SLIDE_HEIGHT,
+    borderBottomRightRadius: BORDER_RADIUS,
+  },
+  footer: {
+    flex: 1,
+  },
+  footerContent: {
+    flexDirection: "row",
+    backgroundColor: "white",
+    borderTopLeftRadius: BORDER_RADIUS,
+  },
+});

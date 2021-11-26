@@ -4,6 +4,12 @@ import { createStackNavigator } from "@react-navigation/stack";
 
 import OnBoarding from "./src/Authentication/Onboarding";
 import { LoadAssets } from "./src/components";
+import { LogBox } from "react-native";
+
+// Ignore warning
+LogBox.ignoreLogs([
+  "ReactNativeFiberHostComponent: Calling getNode() on the ref of an Animated component is no longer necessary. You can now directly use the ref instead. This method will be removed in a future release.",
+]);
 
 const fonts = {
   "SFProText-Bold": require("./assets/fonts/SF-Pro-Text-Bold.otf"),
