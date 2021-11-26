@@ -5,7 +5,6 @@ import Animated, {
   useSharedValue,
   interpolateColor,
   useAnimatedScrollHandler,
-  multiply,
 } from "react-native-reanimated";
 
 import Slide, { SLIDE_HEIGHT } from "./Slide";
@@ -21,6 +20,7 @@ const slides = [
     subtitle: "Find Your Outfits",
     description:
       "Confused about your outfits? Don't worry find the best oufit here",
+    picture: require("../../../assets/images/1.png"),
   },
   {
     title: "Playfull",
@@ -28,6 +28,7 @@ const slides = [
     subtitle: "Hear it First, Wear it First",
     description:
       "Hating the clothes in your wardrobe? Explore hundreds of ourfit ideas",
+    picture: require("../../../assets/images/2.png"),
   },
   {
     title: "Excentric",
@@ -35,6 +36,7 @@ const slides = [
     subtitle: "Your Style, Your Way",
     description:
       "Create your individuals & unique style and look amazing everyday",
+    picture: require("../../../assets/images/3.png"),
   },
   {
     title: "Funky",
@@ -42,6 +44,7 @@ const slides = [
     subtitle: "Look Good, Feel Good",
     description:
       "Discover the best trends in fashion and explore your personality",
+    picture: require("../../../assets/images/4.png"),
   },
 ];
 

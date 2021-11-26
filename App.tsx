@@ -1,10 +1,10 @@
 import * as React from "react";
-import { NavigationContainer } from "@react-navigation/native";
+import { LogBox } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
+import { ThemeProvider } from "@shopify/restyle";
 
 import OnBoarding from "./src/Authentication/Onboarding";
-import { LoadAssets } from "./src/components";
-import { LogBox } from "react-native";
+import { LoadAssets, Theme } from "./src/components";
 
 // Ignore warning
 LogBox.ignoreLogs([
@@ -26,8 +26,10 @@ const AuthenticationNavigator = () => (
 
 export default function App() {
   return (
-    <LoadAssets {...{ fonts }}>
-      <AuthenticationNavigator />
-    </LoadAssets>
+    <ThemeProvider theme={Theme}>
+      <LoadAssets {...{ fonts }}>
+        <AuthenticationNavigator />
+      </LoadAssets>
+    </ThemeProvider>
   );
 }
