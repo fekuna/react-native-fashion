@@ -11,17 +11,6 @@ const styles = StyleSheet.create({
   container: {
     width,
   },
-  // underlay: {
-  //   ...StyleSheet.absoluteFillObject,
-  //   justifyContent: "flex-end",
-  //   borderBottomRightRadius: BORDER_RADIUS,
-  // },
-  // picture: {
-  //   ...StyleSheet.absoluteFillObject,
-  //   width: undefined,
-  //   height: undefined,
-  //   borderBottomRightRadius: BORDER_RADIUS,
-  // },
   titleContainer: {
     height: 100,
     justifyContent: "center",
@@ -29,7 +18,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 80,
     lineHeight: 80,
-    fontFamily: "SFProText-Bold",
+    fontFamily: "SFProDisplay-Bold",
     color: "white",
     textAlign: "center",
   },
@@ -48,24 +37,8 @@ const Slide = ({ title, right, picture }: SlideProps) => {
     { rotate: right ? "-90deg" : "90deg" },
   ];
 
-  // const rSlideStyles = useAnimatedStyle(() => {
-  //   const opacity = interpolate(
-  //     scrollOffset.value / width,
-  //     [index - 1, index, index + 1],
-  //     [0, 1, 0],
-  //     Extrapolate.CLAMP
-  //   );
-
-  //   return {
-  //     opacity,
-  //   };
-  // });
-
   return (
     <View style={styles.container}>
-      {/* <View style={[styles.underlay]}>
-        <Image source={picture} style={styles.picture} />
-      </View> */}
       <View style={[styles.titleContainer, { transform }]}>
         <Text style={styles.title}>{title}</Text>
       </View>

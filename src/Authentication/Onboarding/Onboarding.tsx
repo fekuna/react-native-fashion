@@ -1,3 +1,4 @@
+import { StackNavigationProp } from "@react-navigation/stack";
 import React, { useRef } from "react";
 import { View, StyleSheet, Dimensions } from "react-native";
 import Animated, {
@@ -7,6 +8,7 @@ import Animated, {
   useAnimatedScrollHandler,
 } from "react-native-reanimated";
 import { Dot } from "../../components";
+import { Routes } from "../../components/Navigation";
 import theme from "../../components/Theme";
 
 import Slide, { SLIDE_HEIGHT } from "./Slide";
@@ -67,7 +69,7 @@ const slides = [
   },
 ];
 
-const Onboarding = () => {
+const Onboarding = ({ navigation }) => {
   const scroll = useRef<Animated.ScrollView>(null);
   const x = useSharedValue(0);
 
@@ -160,22 +162,27 @@ const Onboarding = () => {
               rSubslideStyles,
             ]}
           >
-            {slides.map(({ subtitle, description }, index) => (
-              <Subslide
-                key={index}
-                onPress={() => {
-                  if (scroll.current) {
-                    console.log({ scrollTo: width * index });
-                    scroll.current.getNode().scrollTo({
-                      x: width * (index + 1),
-                      animated: true,
-                    });
-                  }
-                }}
-                last={index === slides.length - 1}
-                {...{ subtitle, description }}
-              />
-            ))}
+            {slides.map(({ subtitle, description }, index) => {
+              const last = index === slides.length - 1;
+
+              return (
+                <Subslide
+                  key={index}
+                  onPress={() => {
+                    if (last) {
+                      navigation.navigate("Welcome");
+                    } else {
+                      scroll.current?.getNode().scrollTo({
+                        x: width * (index + 1),
+                        animated: true,
+                      });
+                    }
+                  }}
+                  last={index === slides.length - 1}
+                  {...{ subtitle, description }}
+                />
+              );
+            })}
           </Animated.View>
         </Animated.View>
       </View>
