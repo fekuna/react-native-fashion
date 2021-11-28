@@ -7,8 +7,10 @@ import Animated, {
   useAnimatedScrollHandler,
 } from "react-native-reanimated";
 import { Dot } from "../../components";
+import theme from "../../components/Theme";
 
 import Slide, { SLIDE_HEIGHT } from "./Slide";
+import SliderImage from "./SliderImage";
 import Subslide from "./Subslide";
 
 const BORDER_RADIUS = 75;
@@ -21,7 +23,11 @@ const slides = [
     subtitle: "Find Your Outfits",
     description:
       "Confused about your outfits? Don't worry find the best oufit here",
-    picture: require("../../../assets/images/1.png"),
+    picture: {
+      src: require("../../../assets/images/1.png"),
+      width: 2513,
+      height: 3583,
+    },
   },
   {
     title: "Playfull",
@@ -29,7 +35,11 @@ const slides = [
     subtitle: "Hear it First, Wear it First",
     description:
       "Hating the clothes in your wardrobe? Explore hundreds of ourfit ideas",
-    picture: require("../../../assets/images/2.png"),
+    picture: {
+      src: require("../../../assets/images/2.png"),
+      width: 2513,
+      height: 3583,
+    },
   },
   {
     title: "Excentric",
@@ -37,7 +47,11 @@ const slides = [
     subtitle: "Your Style, Your Way",
     description:
       "Create your individuals & unique style and look amazing everyday",
-    picture: require("../../../assets/images/3.png"),
+    picture: {
+      src: require("../../../assets/images/3.png"),
+      width: 2513,
+      height: 3583,
+    },
   },
   {
     title: "Funky",
@@ -45,7 +59,11 @@ const slides = [
     subtitle: "Look Good, Feel Good",
     description:
       "Discover the best trends in fashion and explore your personality",
-    picture: require("../../../assets/images/4.png"),
+    picture: {
+      src: require("../../../assets/images/4.png"),
+      width: 2513,
+      height: 3583,
+    },
   },
 ];
 
@@ -90,6 +108,16 @@ const Onboarding = () => {
   return (
     <View style={styles.container}>
       <Animated.View style={[styles.slider, rSlideStyles]}>
+        {slides.map(({ picture }, index) => {
+          return (
+            <SliderImage
+              key={index}
+              index={index}
+              scrollOffset={x}
+              picture={picture}
+            />
+          );
+        })}
         <Animated.ScrollView
           ref={scroll}
           horizontal
@@ -99,10 +127,13 @@ const Onboarding = () => {
           bounces={false}
           scrollEventThrottle={16}
           onScroll={scrollHandler}
-          // {...{ onScroll }}
         >
           {slides.map(({ title, picture }, index) => (
-            <Slide key={index} right={!!(index % 2)} {...{ title, picture }} />
+            <Slide
+              key={index}
+              right={!!(index % 2)}
+              {...{ title, picture: picture.src }}
+            />
           ))}
         </Animated.ScrollView>
       </Animated.View>
@@ -161,7 +192,7 @@ const styles = StyleSheet.create({
   },
   slider: {
     height: SLIDE_HEIGHT,
-    borderBottomRightRadius: BORDER_RADIUS,
+    borderBottomRightRadius: theme.borderRadii.xl,
   },
   footer: {
     flex: 1,
@@ -169,7 +200,7 @@ const styles = StyleSheet.create({
   footerContent: {
     flex: 1,
     backgroundColor: "white",
-    borderTopLeftRadius: BORDER_RADIUS,
+    borderTopLeftRadius: theme.borderRadii.xl,
   },
   pagination: {
     // backgroundColor: "red",

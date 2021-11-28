@@ -23,6 +23,8 @@ interface SliderIamgeProps {
 
 const { width } = Dimensions.get("window");
 
+const BORDER_RADIUS = 75;
+
 const SliderImage = ({ index, scrollOffset, picture }: SliderIamgeProps) => {
   const rSlideStyles = useAnimatedStyle(() => {
     const opacity = interpolate(
@@ -39,7 +41,16 @@ const SliderImage = ({ index, scrollOffset, picture }: SliderIamgeProps) => {
 
   return (
     <Animated.View style={[styles.underlay, rSlideStyles]}>
-      <Image source={picture.src} style={styles.picture} />
+      <Image
+        source={picture.src}
+        style={[
+          {
+            width: width - BORDER_RADIUS,
+            height: ((width - BORDER_RADIUS) * picture.height) / picture.width,
+            // borderBottomRightRadius: BORDER_RADIUS
+          },
+        ]}
+      />
     </Animated.View>
   );
 };
@@ -47,6 +58,17 @@ const SliderImage = ({ index, scrollOffset, picture }: SliderIamgeProps) => {
 export default SliderImage;
 
 const styles = StyleSheet.create({
-  underlay: {},
-  picture: {},
+  underlay: {
+    ...StyleSheet.absoluteFillObject,
+    alignItems: "center",
+    justifyContent: "flex-end",
+    borderBottomRightRadius: BORDER_RADIUS,
+    overflow: "hidden",
+  },
+  picture: {
+    ...StyleSheet.absoluteFillObject,
+    width: undefined,
+    height: undefined,
+    borderBottomRightRadius: BORDER_RADIUS,
+  },
 });

@@ -11,17 +11,17 @@ const styles = StyleSheet.create({
   container: {
     width,
   },
-  underlay: {
-    ...StyleSheet.absoluteFillObject,
-    justifyContent: "flex-end",
-    borderBottomRightRadius: BORDER_RADIUS,
-  },
-  picture: {
-    ...StyleSheet.absoluteFillObject,
-    width: undefined,
-    height: undefined,
-    borderBottomRightRadius: BORDER_RADIUS,
-  },
+  // underlay: {
+  //   ...StyleSheet.absoluteFillObject,
+  //   justifyContent: "flex-end",
+  //   borderBottomRightRadius: BORDER_RADIUS,
+  // },
+  // picture: {
+  //   ...StyleSheet.absoluteFillObject,
+  //   width: undefined,
+  //   height: undefined,
+  //   borderBottomRightRadius: BORDER_RADIUS,
+  // },
   titleContainer: {
     height: 100,
     justifyContent: "center",
@@ -63,9 +63,9 @@ const Slide = ({ title, right, picture }: SlideProps) => {
 
   return (
     <View style={styles.container}>
-      <View style={[styles.underlay]}>
+      {/* <View style={[styles.underlay]}>
         <Image source={picture} style={styles.picture} />
-      </View>
+      </View> */}
       <View style={[styles.titleContainer, { transform }]}>
         <Text style={styles.title}>{title}</Text>
       </View>
