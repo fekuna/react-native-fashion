@@ -1,12 +1,10 @@
 import * as React from "react";
 import { LogBox } from "react-native";
-import { createStackNavigator } from "@react-navigation/stack";
 import { ThemeProvider } from "@shopify/restyle";
 
-import OnBoarding from "./src/Authentication/Onboarding";
 import { LoadAssets, Theme } from "./src/components";
-import { Routes } from "./src/components/Navigation";
-import { Welcome } from "./src/Authentication";
+import { AuthenticationNavigator } from "./src/Authentication";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 // Ignore warning
 LogBox.ignoreLogs([
@@ -20,19 +18,13 @@ const fonts = {
   "SFProDisplay-Medium": require("./assets/fonts/SF-Pro-Display-Medium.otf"),
 };
 
-const AuthenticationStack = createStackNavigator<Routes>();
-const AuthenticationNavigator = () => (
-  <AuthenticationStack.Navigator screenOptions={{ headerShown: false }}>
-    <AuthenticationStack.Screen name="Onboarding" component={OnBoarding} />
-    <AuthenticationStack.Screen name="Welcome" component={Welcome} />
-  </AuthenticationStack.Navigator>
-);
-
 export default function App() {
   return (
     <ThemeProvider theme={Theme}>
       <LoadAssets {...{ fonts }}>
-        <AuthenticationNavigator />
+        <SafeAreaProvider>
+          <AuthenticationNavigator />
+        </SafeAreaProvider>
       </LoadAssets>
     </ThemeProvider>
   );

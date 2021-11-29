@@ -9,12 +9,9 @@ const theme: BaseTheme = createTheme({
   colors: {
     primary: "#2CB9B0",
     white: "white",
-    title: "#0C0D34",
+    secondary: "#0C0D34",
     text: "rgba(12, 13, 52, 0.7)",
-    grey: "rgba(12, 13, 52, 0.05)",
-    "slide.grey": "red",
-    button: "#0C0D34",
-    transparent: "transparent",
+    grey: "#F4F0EF",
   },
   spacing: {
     s: 8,
@@ -39,14 +36,14 @@ const theme: BaseTheme = createTheme({
     },
     title1: {
       fontSize: 28,
-      color: "title",
+      color: "secondary",
       fontFamily: "SFProDisplay-Semibold",
     },
     title2: {
       fontSize: 24,
       lineHeight: 30,
       fontFamily: "SFProDisplay-Semibold",
-      color: "title",
+      color: "secondary",
     },
     body: {
       fontSize: 16,

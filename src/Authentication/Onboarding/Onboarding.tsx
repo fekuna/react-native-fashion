@@ -1,4 +1,3 @@
-import { StackNavigationProp } from "@react-navigation/stack";
 import React, { useRef } from "react";
 import { View, StyleSheet, Dimensions } from "react-native";
 import Animated, {
@@ -8,7 +7,7 @@ import Animated, {
   useAnimatedScrollHandler,
 } from "react-native-reanimated";
 import { Dot } from "../../components";
-import { Routes } from "../../components/Navigation";
+import { Routes, StackNavigationProps } from "../../components/Navigation";
 import theme from "../../components/Theme";
 
 import Slide, { SLIDE_HEIGHT } from "./Slide";
@@ -69,7 +68,9 @@ const slides = [
   },
 ];
 
-const Onboarding = ({ navigation }) => {
+const Onboarding = ({
+  navigation,
+}: StackNavigationProps<Routes, "Onboarding">) => {
   const scroll = useRef<Animated.ScrollView>(null);
   const x = useSharedValue(0);
 
