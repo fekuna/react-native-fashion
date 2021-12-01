@@ -1,46 +1,7 @@
-import { useTheme } from "@shopify/restyle";
-import React, { ReactNode } from "react";
+import React from "react";
 import { StyleSheet } from "react-native";
-import { RectButton } from "react-native-gesture-handler";
-import { Theme, Text } from "./Theme";
-
-interface ButtonProps {
-  variant: "default" | "primary" | "transparent";
-  label?: string;
-  onPress: () => void;
-  children?: ReactNode;
-}
-
-const Button = ({ variant, label, onPress, children }: ButtonProps) => {
-  const theme = useTheme<Theme>();
-  const backgroundColor =
-    variant === "primary"
-      ? theme.colors.primary
-      : variant === "transparent"
-      ? "transparent"
-      : theme.colors.grey;
-  const color =
-    variant === "primary" ? theme.colors.white : theme.colors.secondary;
-
-  return (
-    <RectButton
-      style={[styles.container, { backgroundColor }]}
-      {...{ onPress }}
-    >
-      {children ? (
-        children
-      ) : (
-        <Text variant="button" style={{ color }}>
-          {label}
-        </Text>
-      )}
-    </RectButton>
-  );
-};
-
-Button.defaultProps = { variant: "default" };
-
-export default Button;
+import { Text, useTheme } from "./Theme";
+import { RectButton, RectButtonProperties } from "react-native-gesture-handler";
 
 const styles = StyleSheet.create({
   container: {
@@ -50,9 +11,33 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  label: {
-    fontFamily: "SFProDisplay-Regular",
-    fontSize: 15,
-    textAlign: "center",
-  },
 });
+
+interface ButtonProps {
+  variant: "default" | "primary";
+  label?: string;
+  onPress: () => void;
+  style?: RectButtonProperties["style"];
+}
+
+const Button = ({ variant, label, onPress, style }: ButtonProps) => {
+  const { colors } = useTheme();
+  const backgroundColor =
+    variant === "primary" ? colors.primary : colors.background2;
+  const color = variant === "primary" ? colors.background : colors.secondary;
+
+  return (
+    <RectButton
+      style={[styles.container, style, { backgroundColor }]}
+      {...{ onPress }}
+    >
+      <Text variant="button" style={{ color }}>
+        {label}
+      </Text>
+    </RectButton>
+  );
+};
+
+Button.defaultProps = { variant: "default" };
+
+export default Button;

@@ -1,7 +1,6 @@
 import React, { ReactNode } from "react";
 import Svg, { Circle, Path } from "react-native-svg";
-import { Box } from ".";
-import theme from "./Theme";
+import { Box, useTheme } from "../../components";
 
 const Facebook = () => (
   <Svg
@@ -53,26 +52,28 @@ const Reddit = () => (
   </Svg>
 );
 
-const SIZE = theme.borderRadii.l * 2;
-
 interface SocialIconProps {
   children: ReactNode;
 }
 
-const SocialIcon = ({ children }: SocialIconProps) => (
-  <Box
-    margin="m"
-    padding="s"
-    backgroundColor="white"
-    width={SIZE}
-    height={SIZE}
-    borderRadius="l"
-    justifyContent="center"
-    alignItems="center"
-  >
-    {children}
-  </Box>
-);
+const SocialIcon = ({ children }: SocialIconProps) => {
+  const theme = useTheme();
+  const SIZE = theme.borderRadii.l * 2;
+
+  return (
+    <Box
+      marginHorizontal="s"
+      backgroundColor="background"
+      width={SIZE}
+      height={SIZE}
+      borderRadius="l"
+      justifyContent="center"
+      alignItems="center"
+    >
+      {children}
+    </Box>
+  );
+};
 
 const SocialLogin = () => {
   return (

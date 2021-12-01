@@ -27,10 +27,9 @@ const styles = StyleSheet.create({
 interface SlideProps {
   title: string;
   right?: boolean;
-  picture: number;
 }
 
-const Slide = ({ title, right, picture }: SlideProps) => {
+const Slide = ({ title, right }: SlideProps) => {
   const transform = [
     { translateY: (SLIDE_HEIGHT - 100) / 2 },
     { translateX: right ? width / 2 - 50 : -width / 2 + 50 },

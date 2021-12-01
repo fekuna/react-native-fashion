@@ -6,16 +6,41 @@ import Animated, {
   interpolateColor,
   useAnimatedScrollHandler,
 } from "react-native-reanimated";
-import { Dot } from "../../components";
-import { Routes, StackNavigationProps } from "../../components/Navigation";
-import theme from "../../components/Theme";
+import { AuthNavigationProps } from "../../components/Navigation";
+
+import { Theme, makeStyles } from "../../components/Theme";
 
 import Slide, { SLIDE_HEIGHT } from "./Slide";
 import SliderImage from "./SliderImage";
 import Subslide from "./Subslide";
+import Dot from "./Dot";
 
-const BORDER_RADIUS = 75;
 const { width } = Dimensions.get("window");
+const useStyles = makeStyles((theme: Theme) => ({
+  container: {
+    flex: 1,
+    backgroundColor: theme.colors.background,
+  },
+  slider: {
+    height: SLIDE_HEIGHT,
+    borderBottomEndRadius: theme.borderRadii.xl,
+  },
+  footer: {
+    flex: 1,
+  },
+  footerContent: {
+    flex: 1,
+    backgroundColor: theme.colors.background,
+    borderTopLeftRadius: theme.borderRadii.xl,
+  },
+  pagination: {
+    ...StyleSheet.absoluteFillObject,
+    height: theme.borderRadii.xl,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+}));
 
 const slides = [
   {
@@ -68,9 +93,8 @@ const slides = [
   },
 ];
 
-const Onboarding = ({
-  navigation,
-}: StackNavigationProps<Routes, "Onboarding">) => {
+const Onboarding = ({ navigation }: AuthNavigationProps<"Onboarding">) => {
+  const styles = useStyles();
   const scroll = useRef<Animated.ScrollView>(null);
   const x = useSharedValue(0);
 
@@ -192,31 +216,3 @@ const Onboarding = ({
 };
 
 export default Onboarding;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "white",
-  },
-  slider: {
-    height: SLIDE_HEIGHT,
-    borderBottomRightRadius: theme.borderRadii.xl,
-  },
-  footer: {
-    flex: 1,
-  },
-  footerContent: {
-    flex: 1,
-    backgroundColor: "white",
-    borderTopLeftRadius: theme.borderRadii.xl,
-  },
-  pagination: {
-    // backgroundColor: "red",
-    ...StyleSheet.absoluteFillObject,
-    flex: 1,
-    top: 12,
-    height: 8,
-    flexDirection: "row",
-    justifyContent: "center",
-  },
-});
