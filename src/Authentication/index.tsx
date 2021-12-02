@@ -4,6 +4,7 @@ import { AuthRoutes } from "../components/Navigation";
 import Onboarding from "./Onboarding";
 import Welcome from "./Welcome";
 import Login from "./Login";
+import SignUp from "./SignUp";
 
 export { default as OnBoarding } from "./Onboarding";
 export { default as Welcome } from "./Welcome";
@@ -15,8 +16,8 @@ export const AuthenticationNavigator = () => {
       <AuthenticationStack.Screen name="Onboarding" component={Onboarding} />
       <AuthenticationStack.Screen name="Welcome" component={Welcome} />
       <AuthenticationStack.Screen name="Login" component={Login} />
-      {/* <AuthenticationStack.Screen name="SignUp" component={SignUp} />
-      <AuthenticationStack.Screen
+      <AuthenticationStack.Screen name="SignUp" component={SignUp} />
+      {/* <AuthenticationStack.Screen
         name="ForgotPassword"
         component={ForgotPassword}
       />

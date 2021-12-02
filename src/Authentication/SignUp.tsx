@@ -1,64 +1,58 @@
-import React, { useRef, useState } from "react";
-import { TextInput } from "react-native";
+import React from "react";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useRef } from "react";
 import { Controller, useForm } from "react-hook-form";
-
+import { TextInput } from "react-native";
+import { object, SchemaOf, string, ref as yupRef } from "yup";
 import { Box, Button, Text } from "../components";
 import Container from "../components/Container";
-import RNTextInput from "../components/Form/TextInput";
 import { AuthNavigationProps } from "../components/Navigation";
-import { SchemaOf, object, string } from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
 import Footer from "./components/Footer";
-import { CommonActions } from "@react-navigation/routers";
-import Checkbox from "../components/Form/Checkbox";
-import { BorderlessButton } from "react-native-gesture-handler";
+import RNTextInput from "../components/Form/TextInput";
 
 interface LoginFormProps {
   email: string;
   password: string;
+  confirmPassword: string;
 }
 
-const loginFormSchema: SchemaOf<LoginFormProps> = object({
-  email: string().email("Invalid email").required("Email is required"),
+const signupFormSchema: SchemaOf<LoginFormProps> = object({
+  email: string().email("Invalid email").required("Required"),
   password: string()
     .min(2, "Too Short!")
     .max(50, "Too Long!")
     .required("Required"),
+  confirmPassword: string()
+    .equals([yupRef("password")], "Passwords don't match")
+    .required("Required"),
 });
 
-const Login = ({ navigation }: AuthNavigationProps<"Login">) => {
+const SignUp = ({ navigation }: AuthNavigationProps<"SignUp">) => {
   const { control, handleSubmit } = useForm<LoginFormProps>({
-    resolver: yupResolver(loginFormSchema),
-    defaultValues: { email: "", password: "" },
+    resolver: yupResolver(signupFormSchema),
+    defaultValues: { email: "", password: "", confirmPassword: "" },
     mode: "all",
   });
 
   const password = useRef<TextInput>(null);
-  const [remember, setRemember] = useState(false);
-
+  const confirmPassword = useRef<TextInput>(null);
   const footer = (
     <Footer
-      title="Don't have an account?"
-      action="Sign Up here"
-      onPress={() => navigation.navigate("SignUp")}
+      title="Already have an account?"
+      action="Login here"
+      onPress={() => navigation.navigate("Login")}
     />
   );
 
-  const onSubmit = (data) =>
-    navigation.dispatch(
-      CommonActions.reset({
-        index: 0,
-        routes: [{ name: "Home" }],
-      })
-    );
+  const onSubmit = (data) => console.log("signUp: ", data);
 
   return (
-    <Container pattern={0} {...{ footer }}>
+    <Container pattern={1} {...{ footer }}>
       <Text variant="title1" textAlign="center" marginBottom="l">
-        Welcome Back
+        Create account
       </Text>
       <Text variant="body" textAlign="center" marginBottom="l">
-        Use your credentials below and login to your account.
+        Let us know your email and password.
       </Text>
       <Box>
         <Box marginBottom="m">
@@ -104,37 +98,43 @@ const Login = ({ navigation }: AuthNavigationProps<"Login">) => {
                 touched={isTouched}
                 autoCompleteType="password"
                 autoCapitalize="none"
-                returnKeyType="go"
-                returnKeyLabel="go"
-                onSubmitEditing={handleSubmit(onSubmit)}
+                returnKeyType="next"
+                returnKeyLabel="next"
+                onSubmitEditing={() => confirmPassword.current?.focus()}
                 secureTextEntry
               />
             )}
           />
         </Box>
-        <Box
-          flexDirection="row"
-          justifyContent="space-between"
-          marginVertical="s"
-          alignItems="center"
-        >
-          <Checkbox
-            label="Remember me"
-            checked={remember}
-            onChange={() => setRemember((prevState) => !prevState)}
-          />
-          <BorderlessButton
-            onPress={() => navigation.navigate("ForgotPassword")}
-          >
-            <Text variant="button" color="primary">
-              Forgot Password
-            </Text>
-          </BorderlessButton>
-        </Box>
+        <Controller
+          control={control}
+          name="confirmPassword"
+          render={({
+            field: { onChange, onBlur, value },
+            fieldState: { error, isTouched },
+          }) => (
+            <RNTextInput
+              ref={confirmPassword}
+              icon="lock"
+              placeholder="Confirm your password"
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              error={error}
+              touched={isTouched}
+              autoCompleteType="password"
+              autoCapitalize="none"
+              returnKeyType="go"
+              returnKeyLabel="go"
+              onSubmitEditing={handleSubmit(onSubmit)}
+              secureTextEntry
+            />
+          )}
+        />
         <Box alignItems="center" marginTop="m">
           <Button
             variant="primary"
-            label="Log into your account"
+            label="Create your account"
             onPress={handleSubmit(onSubmit)}
           />
         </Box>
@@ -143,4 +143,4 @@ const Login = ({ navigation }: AuthNavigationProps<"Login">) => {
   );
 };
 
-export default Login;
+export default SignUp;
