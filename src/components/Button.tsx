@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet } from "react-native";
 import { Text, useTheme } from "./Theme";
 import { RectButton, RectButtonProperties } from "react-native-gesture-handler";
+import { SubmitHandler } from "react-hook-form";
 
 const styles = StyleSheet.create({
   container: {
@@ -16,7 +17,7 @@ const styles = StyleSheet.create({
 interface ButtonProps {
   variant: "default" | "primary";
   label?: string;
-  onPress: () => void;
+  onPress: any;
   style?: RectButtonProperties["style"];
 }
 

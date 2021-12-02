@@ -1,36 +1,58 @@
-// import React from "react";
-// import { TextInput as RNTextInput } from "react-native";
-// import { Feather as Icon } from "@expo/vector-icons";
-// import { useState } from "react";
-// import { Box } from "../../../components";
-// import theme from "../../../components/Theme";
+import React from "react";
 
-// interface TextInputProps {
-//   placeholder: string;
-//   icon: any;
-//   validator?: (input: string) => boolean;
-// }
+import { forwardRef } from "react";
+import { FieldError } from "react-hook-form";
+import { TextInputProps, TextInput, StyleSheet } from "react-native";
+import { Feather as Icon } from "@expo/vector-icons";
+import { Box, Text, useTheme } from "..";
+import RoundIcon from "../RoundIcon";
 
-// const SIZE = theme.borderRadii.m * 2;
-// const Valid = true;
-// const Invalid = false;
-// const Prestine = null;
+interface RNTextInputProps extends TextInputProps {
+  icon: keyof typeof Icon.glyphMap;
+  error?: FieldError;
+  touched?: boolean;
+}
 
-// type InputState = typeof Valid | typeof Invalid | typeof Prestine;
+const RNTextInput = forwardRef<TextInput, RNTextInputProps>(
+  ({ icon, error, touched, ...props }, ref) => {
+    const theme = useTheme();
+    const SIZE = theme.borderRadii.m * 2;
+    const color = !touched ? "body" : error ? "danger" : "primary";
+    const themeColor = theme.colors[color];
 
-// const TextInput = ({ icon, placeholder }: TextInputProps) => {
-//   const [valid, setValid] = useState<InputState>(Prestine);
+    return (
+      <Box
+        flexDirection="row"
+        alignItems="center"
+        height={48}
+        borderRadius="s"
+        borderColor={color}
+        borderWidth={StyleSheet.hairlineWidth}
+      >
+        <Box padding="s">
+          <Icon name={icon} size={16} color={themeColor} />
+        </Box>
+        <Box flex={1}>
+          <TextInput
+            underlineColorAndroid="transparent"
+            placeholderTextColor={themeColor}
+            {...{ ref }}
+            {...props}
+          />
+        </Box>
+        {touched && (
+          <Box marginRight="s">
+            <RoundIcon
+              name={!error ? "check" : "x"}
+              size={SIZE}
+              backgroundColor={!error ? "primary" : "danger"}
+              color="background"
+            />
+          </Box>
+        )}
+      </Box>
+    );
+  }
+);
 
-//   return (
-//     <Box flexDirection="row" alignItems="center">
-//       <Icon name={icon} />
-//       <RNTextInput
-//         underlineColorAndroid="transparent"
-//         placeholderTextColor="#151624"
-//         {...{ placeholder }}
-//       />
-//     </Box>
-//   );
-// };
-
-// export default TextInput;
+export default RNTextInput;

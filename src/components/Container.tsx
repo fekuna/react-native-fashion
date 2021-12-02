@@ -28,7 +28,7 @@ const Container = ({ children, footer, pattern }: ContainerProps) => {
   const asset = assets[pattern];
 
   return (
-    <KeyboardAwareScrollView scrollEnabled={false}>
+    <KeyboardAwareScrollView>
       <Box
         flex={1}
         height={
@@ -64,6 +64,7 @@ const Container = ({ children, footer, pattern }: ContainerProps) => {
           />
           <Box
             borderRadius="xl"
+            borderTopLeftRadius="zero"
             backgroundColor="background"
             padding="xl"
             justifyContent="center"
