@@ -5,6 +5,8 @@ import Onboarding from "./Onboarding";
 import Welcome from "./Welcome";
 import Login from "./Login";
 import SignUp from "./SignUp";
+import ForgotPassword from "./ForgotPassword";
+import PasswordChanged from "./PasswordChanged";
 
 export { default as OnBoarding } from "./Onboarding";
 export { default as Welcome } from "./Welcome";
@@ -17,14 +19,14 @@ export const AuthenticationNavigator = () => {
       <AuthenticationStack.Screen name="Welcome" component={Welcome} />
       <AuthenticationStack.Screen name="Login" component={Login} />
       <AuthenticationStack.Screen name="SignUp" component={SignUp} />
-      {/* <AuthenticationStack.Screen
+      <AuthenticationStack.Screen
         name="ForgotPassword"
         component={ForgotPassword}
       />
       <AuthenticationStack.Screen
         name="PasswordChanged"
         component={PasswordChanged}
-      /> */}
+      />
     </AuthenticationStack.Navigator>
   );
 };

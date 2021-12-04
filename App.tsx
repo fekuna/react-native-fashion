@@ -7,6 +7,7 @@ import { AuthenticationNavigator } from "./src/Authentication";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { createStackNavigator } from "@react-navigation/stack";
 import { AppRoutes } from "./src/components/Navigation";
+import { HomeNavigator } from "./src/Home";
 
 // Ignore warning
 LogBox.ignoreLogs([
@@ -32,6 +33,7 @@ export default function App() {
               name="Authentication"
               component={AuthenticationNavigator}
             />
+            <AppStack.Screen name="Home" component={HomeNavigator} />
           </AppStack.Navigator>
         </SafeAreaProvider>
       </LoadAssets>

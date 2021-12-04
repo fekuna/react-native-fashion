@@ -13,6 +13,7 @@ export interface AuthNavigationProps<RouteName extends keyof AuthRoutes> {
 export interface HomeNavigationProps<RouteName extends keyof HomeRoutes> {
   navigation: DrawerNavigationProp<HomeRoutes, RouteName>;
   route: RouteProp<HomeRoutes, RouteName>;
+  dispatch: any;
 }
 
 export type AppRoutes = {
@@ -37,3 +38,5 @@ export type HomeRoutes = {
   Settings: undefined;
   Cart: undefined;
 };
+
+export type HomeScreenProp = DrawerNavigationProp<HomeRoutes, keyof HomeRoutes>;
