@@ -1,7 +1,7 @@
 import React from "react";
 import { Feather as Icon } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Box, Text } from ".";
+import { Box, Text } from "./Theme";
 import RoundIconButton from "./RoundIconButton";
 import { View } from "react-native";
 
