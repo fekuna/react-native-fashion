@@ -54,7 +54,7 @@ const TransactionHistory = ({
       <Box flex={1} backgroundColor="background">
         <Header
           title="Transaction History"
-          left={{ icon: "arrow-left", onPress: () => navigation.openDrawer() }}
+          left={{ icon: "menu", onPress: () => navigation.openDrawer() }}
           right={{ icon: "share", onPress: () => true }}
           dark={false}
         />
