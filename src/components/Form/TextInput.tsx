@@ -4,7 +4,7 @@ import { forwardRef } from "react";
 import { FieldError } from "react-hook-form";
 import { TextInputProps, TextInput, StyleSheet } from "react-native";
 import { Feather as Icon } from "@expo/vector-icons";
-import { Box, Text, useTheme } from "..";
+import { Box, Text, useTheme } from "../Theme";
 import RoundIcon from "../RoundIcon";
 
 interface RNTextInputProps extends TextInputProps {
