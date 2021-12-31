@@ -1,17 +1,23 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { TextInput } from "react-native";
 import { Controller, useForm } from "react-hook-form";
+import { SchemaOf, object, string } from "yup";
+import * as SecureStore from "expo-secure-store";
+import jwtDecode from "jwt-decode";
 
 import { Box, Button, Text } from "../components";
 import Container from "../components/Container";
 import RNTextInput from "../components/Form/TextInput";
 import { AuthNavigationProps } from "../components/Navigation";
-import { SchemaOf, object, string } from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Footer from "./components/Footer";
 import { CommonActions } from "@react-navigation/routers";
 import Checkbox from "../components/Form/Checkbox";
 import { BorderlessButton } from "react-native-gesture-handler";
+
+import api from "../utils/api";
+import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
+import { signin } from "../store/user/user.action";
 
 interface LoginFormProps {
   email: string;
@@ -19,19 +25,24 @@ interface LoginFormProps {
 }
 
 const loginFormSchema: SchemaOf<LoginFormProps> = object({
-  email: string().email("Invalid email").required("Email is required"),
+  email: string().required("Email is required").email("Invalid email"),
   password: string()
+    .required("Required")
     .min(2, "Too Short!")
-    .max(50, "Too Long!")
-    .required("Required"),
+    .max(50, "Too Long!"),
 });
 
 const Login = ({ navigation }: AuthNavigationProps<"Login">) => {
+  const isAuthenticated = useSelector(
+    (state: RootStateOrAny) => state.auth?.isAuthenticated
+  );
   const { control, handleSubmit } = useForm<LoginFormProps>({
     resolver: yupResolver(loginFormSchema),
-    defaultValues: { email: "", password: "" },
+    // defaultValues: { email: "", password: "" },
     mode: "all",
   });
+
+  const dispatch = useDispatch();
 
   const password = useRef<TextInput>(null);
   const [remember, setRemember] = useState(false);
@@ -44,13 +55,28 @@ const Login = ({ navigation }: AuthNavigationProps<"Login">) => {
     />
   );
 
-  const onSubmit = (data) =>
-    navigation.dispatch(
-      CommonActions.reset({
-        index: 0,
-        routes: [{ name: "Home" }],
-      })
+  const onSubmit = async (data) => {
+    console.log(
+      "\n onsubmit - accessToken: ",
+      await SecureStore.getItemAsync("accessToken")
     );
+
+    dispatch(signin(data));
+  };
+
+  useEffect(() => {
+    // if (isAuthenticated) {
+    //   console.log("bangsat");
+    //   navigation.dispatch(
+    //     CommonActions.reset({
+    //       index: 0,
+    //       routes: [{ name: "Home" }],
+    //     })
+    //   );
+    // }
+
+    console.log("useEffect - isAuthenticated", isAuthenticated);
+  }, [isAuthenticated]);
 
   return (
     <Container pattern={0} {...{ footer }}>
@@ -114,15 +140,15 @@ const Login = ({ navigation }: AuthNavigationProps<"Login">) => {
         </Box>
         <Box
           flexDirection="row"
-          justifyContent="space-between"
+          justifyContent="flex-end"
           marginVertical="s"
           alignItems="center"
         >
-          <Checkbox
+          {/* <Checkbox
             label="Remember me"
             checked={remember}
             onChange={() => setRemember((prevState) => !prevState)}
-          />
+          /> */}
           <BorderlessButton
             onPress={() => navigation.navigate("ForgotPassword")}
           >

@@ -11,8 +11,21 @@ import FavoriteOutfits from "./FavoriteOutfits/FavoriteOutfits";
 import EditProfile from "./EditProfile/EditProfile";
 import TransactionHistory from "./TransactionHistory/TransactionHistory";
 import Settings from "./Settings/Settings";
+import Cart from "./Cart";
+import Products from "./Products";
+import { createStackNavigator } from "@react-navigation/stack";
+import ProductDetail from "./Products/ProductDetail";
 
 const Drawer = createDrawerNavigator<HomeRoutes>();
+
+const AppStack = createStackNavigator();
+
+const ProductsStack = () => (
+  <AppStack.Navigator screenOptions={{ headerShown: false }}>
+    <AppStack.Screen name="Products" component={Products} />
+    <AppStack.Screen name="ProductDetail" component={ProductDetail} />
+  </AppStack.Navigator>
+);
 
 export const HomeNavigator = () => (
   <Drawer.Navigator
@@ -24,10 +37,12 @@ export const HomeNavigator = () => (
       headerShown: false,
     }}
   >
-    <Drawer.Screen name="OutfitIdeas" component={OutfitIdeas} />
+    {/* <Drawer.Screen name="OutfitIdeas" component={OutfitIdeas} /> */}
+    <Drawer.Screen name="ProductList" component={ProductsStack} />
     <Drawer.Screen name="FavoriteOutfits" component={FavoriteOutfits} />
     <Drawer.Screen name="EditProfile" component={EditProfile} />
     <Drawer.Screen name="TransactionHistory" component={TransactionHistory} />
     <Drawer.Screen name="Settings" component={Settings} />
+    <Drawer.Screen name="Cart" component={Cart} />
   </Drawer.Navigator>
 );

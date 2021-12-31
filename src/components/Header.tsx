@@ -16,9 +16,16 @@ interface HeaderProps {
     onPress: () => void;
   };
   dark: boolean;
+  disableMarginTop?: boolean;
 }
 
-const Header = ({ left, title, right, dark }: HeaderProps) => {
+const Header = ({
+  left,
+  title,
+  right,
+  dark,
+  disableMarginTop,
+}: HeaderProps) => {
   const insets = useSafeAreaInsets();
   const color = dark ? "background" : "secondary";
 
@@ -28,7 +35,7 @@ const Header = ({ left, title, right, dark }: HeaderProps) => {
       alignItems="center"
       justifyContent="space-between"
       paddingHorizontal="m"
-      style={{ marginTop: insets.top }}
+      style={{ marginTop: !!disableMarginTop ? 0 : insets.top }}
     >
       <RoundIconButton
         name={left.icon}

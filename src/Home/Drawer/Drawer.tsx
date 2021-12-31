@@ -8,6 +8,9 @@ import { HomeScreenProp } from "../../components/Navigation";
 
 import Header from "../../components/Header";
 import DrawerItem from "./DrawerItem";
+import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
+import { logout } from "../../store/user/user.action";
+import { API_URL } from "../../utils/api";
 
 const { width } = Dimensions.get("window");
 export const DRAWER_WIDTH = width * 0.8;
@@ -18,9 +21,9 @@ export const assets = [require("./assets/drawer.png")];
 
 const items = [
   {
-    icon: "zap",
-    label: "Outfit Ideas",
-    screen: "OutfitIdeas",
+    icon: "list",
+    label: "Products",
+    screen: "Products",
     color: "primary",
   },
   {
@@ -50,13 +53,19 @@ const items = [
   {
     icon: "log-out",
     label: "Logout",
-    onPress: (navigation) =>
-      navigation.dispatch(
-        CommonActions.reset({
-          index: 0,
-          routes: [{ name: "Authentication" }],
-        })
-      ),
+    onPress: async (navigation, dispatch) => {
+      dispatch(logout());
+      // navigation.dispatch(
+      //   CommonActions.reset({
+      //     index: 0,
+      //     routes: [
+      //       {
+      //         name: "Authentication",
+      //       },
+      //     ],
+      //   })
+      // );
+    },
     color: "secondary",
   },
 ];
@@ -64,6 +73,9 @@ const items = [
 const Drawer = () => {
   const theme = useTheme();
   const navigation = useNavigation<HomeScreenProp>();
+  const user = useSelector((state: RootStateOrAny) => state.auth.user);
+
+  // console.log("Inside Drawer", user);
 
   return (
     <Box flex={1}>
@@ -109,17 +121,30 @@ const Drawer = () => {
             position="absolute"
             left={DRAWER_WIDTH / 2 - 50}
             top={-50}
-            backgroundColor="primary"
-            style={{ borderRadius: 50 }}
-            width={100}
-            height={100}
-          />
+            // backgroundColor="primary"
+            // style={{ borderRadius: 50 }}
+            // width={100}
+            // height={100}
+          >
+            <Image
+              source={{
+                uri: `${API_URL}/api/${user.img}`,
+              }}
+              style={{
+                backgroundColor: "red",
+                width: 100,
+                borderRadius: 50,
+                height: 100,
+                // overflow: "hidden",
+              }}
+            />
+          </Box>
           <Box marginTop="xl">
             <Text variant="title1" textAlign="center">
-              Mike Peter
+              {user.name}
             </Text>
             <Text variant="body" textAlign="center">
-              mike@fashionvista.com
+              {user.email}
             </Text>
           </Box>
           {items.map((item, idx) => (

@@ -1,5 +1,6 @@
 import * as React from "react";
 import { LogBox } from "react-native";
+import * as SecureStore from "expo-secure-store";
 import { ThemeProvider } from "./src/components/Theme";
 
 import { LoadAssets } from "./src/components";
@@ -8,6 +9,15 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { createStackNavigator } from "@react-navigation/stack";
 import { AppRoutes } from "./src/components/Navigation";
 import { HomeNavigator } from "./src/Home";
+import {
+  Provider,
+  RootStateOrAny,
+  useDispatch,
+  useSelector,
+} from "react-redux";
+import store from "./src/store";
+import { logout, setCurrentUser } from "./src/store/user/user.action";
+import jwtDecode from "jwt-decode";
 
 // Ignore warning
 LogBox.ignoreLogs([
@@ -23,20 +33,55 @@ const fonts = {
 
 const AppStack = createStackNavigator<AppRoutes>();
 
-export default function App() {
+const RootNavigation = () => {
+  const isAuthenticated = useSelector(
+    (state: RootStateOrAny) => state.auth?.isAuthenticated
+  );
+
+  const dispatch = useDispatch();
+
+  React.useEffect(() => {
+    const checkLoggedIn = async () => {
+      // await SecureStore.deleteItemAsync("accessToken");
+      // await SecureStore.deleteItemAsync("refreshToken");
+      const accessToken = await SecureStore.getItemAsync("accessToken");
+      if (accessToken) {
+        const tokenDecoded = await jwtDecode(accessToken);
+        dispatch(setCurrentUser(tokenDecoded));
+      }
+    };
+
+    checkLoggedIn();
+  }, []);
+
   return (
-    <ThemeProvider>
-      <LoadAssets {...{ fonts }}>
-        <SafeAreaProvider>
-          <AppStack.Navigator screenOptions={{ headerShown: false }}>
-            <AppStack.Screen
-              name="Authentication"
-              component={AuthenticationNavigator}
-            />
-            <AppStack.Screen name="Home" component={HomeNavigator} />
-          </AppStack.Navigator>
-        </SafeAreaProvider>
-      </LoadAssets>
-    </ThemeProvider>
+    <AppStack.Navigator screenOptions={{ headerShown: false }}>
+      {!isAuthenticated ? (
+        <AppStack.Screen
+          name="Authentication"
+          component={AuthenticationNavigator}
+        />
+      ) : (
+        <AppStack.Screen name="Home" component={HomeNavigator} />
+      )}
+    </AppStack.Navigator>
+  );
+};
+
+export default function App() {
+  // const accessToken = await SecureStore.getItemAsync("accessToken");
+
+  // console.log("RootNavigation -  isAuth", accessToken);
+
+  return (
+    <Provider store={store}>
+      <ThemeProvider>
+        <LoadAssets {...{ fonts }}>
+          <SafeAreaProvider>
+            <RootNavigation />
+          </SafeAreaProvider>
+        </LoadAssets>
+      </ThemeProvider>
+    </Provider>
   );
 }

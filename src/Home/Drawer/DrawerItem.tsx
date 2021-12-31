@@ -5,6 +5,7 @@ import { HomeRoutes, HomeScreenProp } from "../../components/Navigation";
 import RoundIcon from "../../components/RoundIcon";
 import { Theme, useTheme, Box, Text } from "../../components/Theme";
 import { Feather as Icon } from "@expo/vector-icons";
+import { useDispatch } from "react-redux";
 
 interface BaseDrawerItem {
   icon: keyof typeof Icon.glyphMap;
@@ -25,13 +26,14 @@ export type DrawerItemProps = ScreenDrawerItem | OnPressDrawerItem;
 const DrawerItem = ({ icon, label, color, ...props }: any) => {
   const theme = useTheme();
   const navigation = useNavigation<HomeScreenProp>();
+  const dispatch = useDispatch();
 
   return (
     <RectButton
       onPress={() =>
         "screen" in props
           ? navigation.navigate(props.screen)
-          : props.onPress(navigation)
+          : props.onPress(navigation, dispatch)
       }
       style={{ borderRadius: theme.borderRadii.m }}
     >

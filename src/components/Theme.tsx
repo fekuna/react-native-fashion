@@ -24,6 +24,8 @@ export const palette = {
   lightBlue: "#BFEAF5",
   grey: "#F4F0EF",
   darkGrey: "#808080",
+  green: "#00B761",
+  light: "#F1F1F1",
 };
 
 const theme = createTheme({
@@ -43,6 +45,11 @@ const theme = createTheme({
     drawer2: palette.yellow,
     drawer3: palette.pink,
     drawer4: palette.violet,
+    love: palette.pink,
+    green: palette.green,
+    light: palette.light,
+    white: palette.white,
+    grey: palette.darkGrey,
   },
   spacing: {
     s: 8,

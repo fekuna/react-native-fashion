@@ -31,6 +31,8 @@ export type AuthRoutes = {
 };
 
 export type HomeRoutes = {
+  ProductList: undefined;
+  ProductDetail: undefined;
   OutfitIdeas: undefined;
   FavoriteOutfits: undefined;
   TransactionHistory: undefined;
