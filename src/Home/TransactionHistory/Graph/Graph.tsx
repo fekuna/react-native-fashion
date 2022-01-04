@@ -14,9 +14,9 @@ import { lerp } from "./Scale";
 
 export interface DataPoint {
   id: number;
-  date: number;
-  value: number;
-  color: keyof Theme["colors"];
+  created_at: number;
+  total: number;
+  color?: keyof Theme["colors"];
 }
 
 interface GraphProps {
@@ -43,7 +43,7 @@ const Graph = ({ data, startDate, numberOfMonths }: GraphProps) => {
   const height = canvasHeight - theme.spacing[MARGIN];
 
   const step = width / numberOfMonths;
-  const values = data.map((p) => p.value);
+  const values = data.map((p) => p.total);
   const minY = Math.min(...values);
   const maxY = Math.max(...values);
 
@@ -59,9 +59,9 @@ const Graph = ({ data, startDate, numberOfMonths }: GraphProps) => {
       <View style={{ width, height, overflow: "hidden" }}>
         {data.map((point) => {
           const i = Math.round(
-            moment.duration(moment(point.date).diff(startDate)).asMonths()
+            moment.duration(moment(point.created_at).diff(startDate)).asMonths()
           );
-          const totalHeight = lerp(0, height, point.value / maxY);
+          const totalHeight = lerp(0, height, point.total / maxY);
           const style = useAnimatedStyle(() => {
             const currentHeight = totalHeight * transition.value;
             const translateY = (totalHeight - currentHeight) / 2;
@@ -81,7 +81,7 @@ const Graph = ({ data, startDate, numberOfMonths }: GraphProps) => {
               style={style}
             >
               <Box
-                backgroundColor={point.color}
+                backgroundColor={point.color || "primary"}
                 opacity={0.1}
                 position="absolute"
                 top={0}

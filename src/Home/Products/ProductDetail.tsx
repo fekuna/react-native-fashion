@@ -1,23 +1,26 @@
 import { useNavigation } from "@react-navigation/native";
-import React from "react";
+import React, { useState } from "react";
 import { Image, ScrollView, View } from "react-native";
+import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useDispatch } from "react-redux";
 import { Box, Header, Text, useTheme } from "../../components";
 import {
   HomeNavigationProps,
   HomeScreenProp,
 } from "../../components/Navigation";
+import { addItemToCart } from "../../store/cart/cart.action";
+import product from "../../store/product";
 import { API_URL } from "../../utils/api";
 import Slider from "./Slider";
 
 const ProductDetail = ({ route: { params } }) => {
-  // console.log("hello", params);
-  // console.log(
-  //   "Images",
-  //   `${API_URL}/api/products/${params.product_images[0].imgPath}`
-  // );
   const theme = useTheme();
   const navigation = useNavigation<HomeScreenProp>();
+  const [quantity, setQuantity] = useState(1);
+
+  const dispatch = useDispatch();
+
   return (
     <SafeAreaView
       style={{
@@ -85,19 +88,29 @@ const ProductDetail = ({ route: { params } }) => {
 
           <Box marginTop="l" flexDirection="row" justifyContent="space-between">
             <Box flexDirection="row" alignItems="center">
-              <Box
-                borderColor="grey"
-                borderWidth={1}
-                borderRadius="s"
-                justifyContent="center"
-                alignItems="center"
-                width={60}
-                height={40}
+              <TouchableWithoutFeedback
+                onPress={() => {
+                  if (quantity > 1) {
+                    setQuantity((prevState) => prevState - 1);
+                  }
+                }}
               >
-                <Text fontWeight="bold" fontSize={28}>
-                  -
-                </Text>
-              </Box>
+                <Box
+                  borderColor="grey"
+                  borderWidth={1}
+                  borderRadius="s"
+                  justifyContent="center"
+                  alignItems="center"
+                  width={60}
+                  height={40}
+                  backgroundColor={quantity > 1 ? "danger" : "grey"}
+                >
+                  <Text fontWeight="bold" fontSize={28} color="white">
+                    -
+                  </Text>
+                </Box>
+              </TouchableWithoutFeedback>
+
               <Text
                 style={{
                   fontSize: 20,
@@ -105,35 +118,51 @@ const ProductDetail = ({ route: { params } }) => {
                   fontWeight: "bold",
                 }}
               >
-                1
+                {quantity}
               </Text>
-              <Box
-                borderColor="grey"
-                borderWidth={1}
-                borderRadius="s"
-                justifyContent="center"
-                alignItems="center"
-                width={60}
-                height={40}
+
+              <TouchableWithoutFeedback
+                onPress={() => {
+                  if (params.stock > quantity) {
+                    setQuantity((prevState) => prevState + 1);
+                  }
+                }}
               >
-                <Text fontWeight="bold" fontSize={28}>
-                  +
-                </Text>
-              </Box>
+                <Box
+                  borderColor="grey"
+                  borderWidth={1}
+                  borderRadius="s"
+                  justifyContent="center"
+                  alignItems="center"
+                  width={60}
+                  height={40}
+                  backgroundColor={params.stock > quantity ? "green" : "grey"}
+                >
+                  <Text fontWeight="bold" fontSize={28} color="white">
+                    +
+                  </Text>
+                </Box>
+              </TouchableWithoutFeedback>
             </Box>
 
-            <Box
-              width={130}
-              height={50}
-              backgroundColor="green"
-              justifyContent="center"
-              alignItems="center"
-              borderRadius="l"
+            <TouchableWithoutFeedback
+              onPress={() =>
+                dispatch(addItemToCart({ productId: params.id, quantity }))
+              }
             >
-              <Text variant="title2" color="white">
-                Buy
-              </Text>
-            </Box>
+              <Box
+                width={130}
+                height={50}
+                backgroundColor="green"
+                justifyContent="center"
+                alignItems="center"
+                borderRadius="l"
+              >
+                <Text variant="title2" color="white">
+                  Buy
+                </Text>
+              </Box>
+            </TouchableWithoutFeedback>
           </Box>
         </Box>
       </Box>

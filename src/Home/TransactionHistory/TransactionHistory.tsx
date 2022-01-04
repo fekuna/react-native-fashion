@@ -1,9 +1,12 @@
-import React from "react";
+import { useIsFocused } from "@react-navigation/core";
+import React, { useEffect, useState } from "react";
 import { Dimensions, ScrollView, StyleSheet } from "react-native";
+import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
 import { Box, Header, Text, makeStyles } from "../../components";
 import { HomeNavigationProps } from "../../components/Navigation";
 import ScrollableContent from "../../components/ScrollableContent";
 import { Theme } from "../../components/Theme";
+import { getHistoryTransaction } from "../../store/history/history.action";
 import Graph, { DataPoint } from "./Graph/Graph";
 import Transaction from "./Transaction";
 
@@ -13,20 +16,20 @@ const numberOfMonths = 6;
 const graphData: DataPoint[] = [
   {
     id: 245674,
-    date: new Date("10/01/2019").getTime(),
-    value: 139.42,
+    created_at: new Date("10/01/2019").getTime(),
+    total: 139.42,
     color: "primary",
   },
   {
     id: 245675,
-    date: new Date("12/01/2019").getTime(),
-    value: 281.23,
+    created_at: new Date("12/01/2019").getTime(),
+    total: 281.23,
     color: "graph1",
   },
   {
     id: 245677,
-    date: new Date("02/01/2020").getTime(),
-    value: 198.54,
+    created_at: new Date("02/01/2020").getTime(),
+    total: 198.54,
     color: "graph2",
   },
 ];
@@ -48,6 +51,32 @@ const TransactionHistory = ({
   navigation,
 }: HomeNavigationProps<"TransactionHistory">) => {
   const styles = useStyles();
+  const dispatch = useDispatch();
+  const isFocused = useIsFocused();
+
+  const [totalOrderPrice, setTotalOrderPrice] = useState(0);
+
+  const transactionHistories = useSelector(
+    (state: RootStateOrAny) => state.transactionHistories.items
+  );
+
+  useEffect(() => {
+    if (isFocused) {
+      console.log("isFocused", isFocused);
+      dispatch(getHistoryTransaction());
+    }
+
+    console.log("TransactionHisotry useEffect: ", transactionHistories);
+
+    const totalOrderPrice = transactionHistories.reduce(
+      (prevValue, item) => prevValue + item.total,
+      0
+    );
+
+    setTotalOrderPrice(totalOrderPrice);
+  }, [isFocused]);
+
+  // console.log("TransactionHistories", transactionHistories);
 
   return (
     <ScrollableContent>
@@ -68,7 +97,7 @@ const TransactionHistory = ({
               <Text variant="header" color="secondary" opacity={0.3}>
                 TOTAL SPENT
               </Text>
-              <Text variant="title1">$619.19</Text>
+              <Text variant="title1">${totalOrderPrice}</Text>
             </Box>
             <Box backgroundColor="primaryLight" borderRadius="l" padding="s">
               <Text color="primary">All Time</Text>
@@ -83,7 +112,7 @@ const TransactionHistory = ({
             contentContainerStyle={styles.scrollView}
             showsVerticalScrollIndicator={false}
           >
-            {graphData.map((transaction) => (
+            {transactionHistories.map((transaction) => (
               <Transaction key={transaction.id} transaction={transaction} />
             ))}
           </ScrollView>

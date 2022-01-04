@@ -7,12 +7,16 @@ import { HomeScreenProp } from "../../components/Navigation";
 import { Dimensions, Image, Pressable, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { API_URL } from "../../utils/api";
+import { useDispatch } from "react-redux";
+import { addItemToCart } from "../../store/cart/cart.action";
 
 const { width } = Dimensions.get("window");
 
 const Card = ({ item }) => {
   const navigation = useNavigation<HomeScreenProp>();
   const theme = useTheme();
+
+  const dispatch = useDispatch();
 
   const productImage =
     item.product_images.length > 0
@@ -77,8 +81,8 @@ const Card = ({ item }) => {
                 width: "100%",
                 height: "100%",
                 overflow: "hidden",
-                // borderTopLeftRadius: 20,
-                // borderTopRightRadius: ,
+                // borderTopLeftRadius: 25,
+                // borderTopRightRadius: 25,
                 resizeMode: "contain",
               }}
             />
@@ -111,7 +115,7 @@ const Card = ({ item }) => {
             marginRight: 5,
             zIndex: 100,
           }}
-          onPress={() => console.log("add to cart")}
+          onPress={() => dispatch(addItemToCart({ productId: item.id }))}
         >
           <Text fontSize={18} color="background" fontWeight="bold">
             +

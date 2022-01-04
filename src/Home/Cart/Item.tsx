@@ -6,13 +6,14 @@ import SwipeableRow from "./SwipeableRow";
 
 interface ItemProps {
   onDelete: () => void;
+  item: any;
 }
 
-const Item = ({ onDelete }: ItemProps) => {
+const Item = ({ onDelete, item }: ItemProps) => {
   const theme = useTheme();
   const height = 120 + theme.spacing.m * 2;
   return (
-    <SwipeableRow onDelete={onDelete} height={height}>
+    <SwipeableRow onDelete={onDelete} height={height} item={item}>
       <Box padding="m" flexDirection="row">
         <Box
           width={120}
@@ -21,12 +22,12 @@ const Item = ({ onDelete }: ItemProps) => {
           style={{ backgroundColor: "#BFEAF5" }}
         />
         <Box padding="m" flex={1} justifyContent="center">
-          <Text variant="header">Size M, L</Text>
+          {/* <Text variant="header">Size M, L</Text> */}
           <Text variant="title3" marginBottom="s">
-            Short Sleeve Organic Top
+            {item.product.title}
           </Text>
           <Text variant="title3" color="primary">
-            $29.99
+            ${item.product.price}
           </Text>
         </Box>
         <Box justifyContent="center">
@@ -41,7 +42,7 @@ const Item = ({ onDelete }: ItemProps) => {
             }}
           >
             <Text variant="header" color="background">
-              x2
+              x{item.quantity}
             </Text>
           </Box>
         </Box>

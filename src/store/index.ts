@@ -3,6 +3,8 @@ import thunk from "redux-thunk";
 
 import userReducer from "./user";
 import productReducer from "./product";
+import cartReducer from "./cart/cart.reducer";
+import historyReducer from "./history";
 
 let composeEnhancers = compose;
 const middleware = [thunk];
@@ -16,6 +18,8 @@ if (__DEV__) {
 const rootReducer = combineReducers({
   auth: userReducer,
   products: productReducer,
+  cart: cartReducer,
+  transactionHistories: historyReducer,
 });
 
 const store = createStore(

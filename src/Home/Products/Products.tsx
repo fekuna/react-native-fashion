@@ -65,7 +65,10 @@ const Products = ({ navigation }: HomeNavigationProps<"ProductList">) => {
       <Header
         title="Product List"
         left={{ icon: "menu", onPress: () => navigation.openDrawer() }}
-        right={{ icon: "shopping-bag", onPress: () => true }}
+        right={{
+          icon: "shopping-bag",
+          onPress: () => navigation.navigate("Cart"),
+        }}
         dark={false}
       />
       <Box

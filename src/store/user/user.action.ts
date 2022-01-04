@@ -10,7 +10,7 @@ export const signin = (data) => async (dispatch) => {
 
   const response = await api.post("/auth/signin", { email, password });
 
-  const { access_token, refresh_token } = response.data;
+  const { access_token, refresh_token } = response?.data;
 
   await SecureStore.setItemAsync("accessToken", access_token);
   await SecureStore.setItemAsync("refreshToken", refresh_token);

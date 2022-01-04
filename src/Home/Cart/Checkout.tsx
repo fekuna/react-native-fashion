@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ScrollView } from "react-native-gesture-handler";
 
 import { Box, Button, Text } from "../../components";
 
 import Card, { CardType } from "./Card";
 import AddCard from "./AddCard";
+import { RootStateOrAny, useSelector } from "react-redux";
 
 interface CheckoutProps {
   minHeight: number;
@@ -49,6 +50,20 @@ const LineItem = ({ label, value }: LineItemProps) => {
 
 const Checkout = ({ minHeight }: CheckoutProps) => {
   const [selectedCard, setSelectedCard] = useState(cards[0].id);
+  const [totalPrice, setTotalPrice] = useState(0);
+  const [deliveryPrice, setDeliveryPrice] = useState(12);
+  const cartItems = useSelector((state: RootStateOrAny) => state.cart.items);
+
+  useEffect(() => {
+    const countPrice = cartItems.reduce(
+      (previousValue, item) =>
+        previousValue + item.product.price * item.quantity,
+      0
+    );
+
+    setTotalPrice(countPrice);
+  }, [totalPrice, cartItems]);
+
   return (
     <Box flex={1} backgroundColor="secondary" style={{ paddingTop: minHeight }}>
       <Box flex={1} padding="m">
@@ -80,9 +95,9 @@ const Checkout = ({ minHeight }: CheckoutProps) => {
               <Text color="background">Change</Text>
             </Box>
           </Box>
-          <LineItem label="Total Items (6)" value={189.94} />
-          <LineItem label="Standard Delivery" value={12} />
-          <LineItem label="Total Payment" value={201.84} />
+          <LineItem label="Total Items (6)" value={totalPrice} />
+          <LineItem label="Standard Delivery" value={deliveryPrice} />
+          <LineItem label="Total Payment" value={totalPrice + deliveryPrice} />
         </Box>
         <Box
           paddingVertical="s"
@@ -90,11 +105,7 @@ const Checkout = ({ minHeight }: CheckoutProps) => {
           // justifyContent="flex-end"
           flex={1}
         >
-          <Button
-            label="Swipe to Pay $201.84"
-            variant="primary"
-            onPress={() => null}
-          />
+          <Button label="Pay now" variant="primary" onPress={() => null} />
         </Box>
       </Box>
     </Box>

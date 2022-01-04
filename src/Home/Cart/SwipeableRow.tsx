@@ -6,6 +6,7 @@ import {
   PanGestureHandlerGestureEvent,
 } from "react-native-gesture-handler";
 import Animated, {
+  runOnJS,
   useAnimatedGestureHandler,
   useAnimatedStyle,
   useSharedValue,
@@ -13,14 +14,17 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { snapPoint } from "react-native-redash";
+import { useDispatch } from "react-redux";
 
 import { Text, RoundIconButton, useTheme } from "../../components";
 import { aspectRatio, Box } from "../../components/Theme";
+import { getCartItems, updateCartItem } from "../../store/cart/cart.action";
 
 interface SwipeableRowProps {
   children: ReactNode;
   onDelete: () => void;
   height: number;
+  item: any;
 }
 
 const { width } = Dimensions.get("window");
@@ -32,10 +36,13 @@ const SwipeableRow = ({
   children,
   onDelete,
   height: defaultHeight,
+  item,
 }: SwipeableRowProps) => {
   const theme = useTheme();
   const translateX = useSharedValue(0);
   const height = useSharedValue(defaultHeight);
+
+  const dispatch = useDispatch();
 
   const deleteItem = useCallback(() => {
     console.log("inside deleteItem");
@@ -49,28 +56,19 @@ const SwipeableRow = ({
     onStart: (_, ctx) => {
       ctx.x = translateX.value;
     },
-    onActive: ({ translationX }, ctx) => {
-      translateX.value = ctx.x + translationX;
+    onActive: ({ translationX }) => {
+      translateX.value = translationX;
     },
     onEnd: ({ velocityX }) => {
       // console.log("velocityX", velocityX);
       const dest = snapPoint(translateX.value, velocityX, snapPoints);
       translateX.value = withSpring(dest, {}, () => {
         if (dest === finalDestination) {
-          height.value = withTiming(0, { duration: 250 }, () => deleteItem());
+          height.value = withTiming(0, { duration: 250 }, () =>
+            runOnJS(onDelete)()
+          );
         }
       });
-      // translateX.value = withSpring(dest, {}, () => {
-      //   console.log({ dest, finalDestination });
-      //   console.log("hehe");
-      // });
-
-      // translateX.value = withSpring(dest);
-
-      // if (dest === finalDestination) {
-      //   const value = withTiming(0, { duration: 250 }, () => deleteItem());
-      //   console.log({ value: value.toValue });
-      // }
     },
   });
 
@@ -121,18 +119,34 @@ const SwipeableRow = ({
           flex={1}
         >
           <RoundIconButton
-            onPress={() => null}
+            onPress={async () => {
+              console.log("Plus");
+              if (item.quantity < item.product.stock) {
+                await dispatch(updateCartItem(item.id, item.quantity + 1));
+                await dispatch(getCartItems());
+              }
+            }}
             name="plus"
             size={24}
             color="background"
-            backgroundColor="primary"
+            // backgroundColor="primary"
+            backgroundColor={
+              item.quantity < item.product.stock ? "primary" : "grey"
+            }
           />
           <RoundIconButton
-            onPress={() => null}
+            onPress={async () => {
+              console.log("Minus");
+              if (item.quantity > 1) {
+                await dispatch(updateCartItem(item.id, item.quantity - 1));
+                await dispatch(getCartItems());
+              }
+            }}
             name="minus"
             size={24}
             color="background"
-            backgroundColor="danger"
+            // backgroundColor="danger"
+            backgroundColor={item.quantity > 1 ? "danger" : "grey"}
           />
         </Box>
       </Animated.View>

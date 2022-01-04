@@ -11,6 +11,7 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 import { clamp, snapPoint } from "react-native-redash";
+import { RootStateOrAny, useSelector } from "react-redux";
 
 import { Box, useTheme } from "../../components";
 
@@ -32,6 +33,10 @@ interface CartContainerProps {
 const CartContainer = ({ children, CheckoutComponent }: CartContainerProps) => {
   const theme = useTheme();
   const translateY = useSharedValue(0);
+  const cartItems = useSelector((state: RootStateOrAny) => state.cart.items);
+
+  // console.log("Cart Container", cartItems);
+
   const onGestureEvent = useAnimatedGestureHandler<
     PanGestureHandlerGestureEvent,
     { y: number }
@@ -58,25 +63,25 @@ const CartContainer = ({ children, CheckoutComponent }: CartContainerProps) => {
   return (
     <Box flex={1}>
       <CheckoutComponent minHeight={minHeight} />
-      <PanGestureHandler onGestureEvent={onGestureEvent}>
-        <Animated.View
-          style={[
-            {
-              overflow: "hidden",
-              backgroundColor: "white",
-              position: "absolute",
-              top: 0,
-              left: 0,
-              right: 0,
-              height,
-              borderBottomLeftRadius: theme.borderRadii.xl,
-              borderBottomRightRadius: theme.borderRadii.xl,
-            },
-            style,
-          ]}
-        >
-          {children}
-          <View
+      <Animated.View
+        style={[
+          {
+            overflow: "hidden",
+            backgroundColor: "white",
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            height,
+            borderBottomLeftRadius: theme.borderRadii.xl,
+            borderBottomRightRadius: theme.borderRadii.xl,
+          },
+          style,
+        ]}
+      >
+        {children}
+        <PanGestureHandler onGestureEvent={onGestureEvent}>
+          <Animated.View
             style={{
               position: "absolute",
               bottom: 0,
@@ -97,9 +102,9 @@ const CartContainer = ({ children, CheckoutComponent }: CartContainerProps) => {
                 marginBottom: theme.spacing.m,
               }}
             />
-          </View>
-        </Animated.View>
-      </PanGestureHandler>
+          </Animated.View>
+        </PanGestureHandler>
+      </Animated.View>
     </Box>
   );
 };

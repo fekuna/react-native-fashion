@@ -19,7 +19,7 @@ export const getProducts =
 
     // console.log("Inside getProducts", response.data);
 
-    const { data, meta } = response.data;
+    const { data, meta } = response?.data;
     // console.log("getProducts", { data, meta });
     dispatch({
       type: GET_PRODUCTS,
