@@ -1,9 +1,15 @@
 import React from "react";
-import { View, Image } from "react-native";
+import { View, Image, Alert } from "react-native";
+import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import { useDispatch } from "react-redux";
 import { Box, Text } from "../../components";
+import { cancelOrderItemStatus } from "../../store/history/history.action";
 import { API_URL } from "../../utils/api";
 
 const TransactionItem = ({ item }) => {
+  console.log("item", item);
+  const dispatch = useDispatch();
+
   return (
     <Box padding="m" flexDirection="row">
       <Box
@@ -50,7 +56,7 @@ const TransactionItem = ({ item }) => {
           <Text variant="body"> - </Text>
           <Text
             variant="title3"
-            color={item.status?.id === 4 ? "danger" : "primary"}
+            color={item.status?.isAvailable ? "primary" : "danger"}
             textTransform="capitalize"
           >
             {item.status.name}
@@ -76,6 +82,27 @@ const TransactionItem = ({ item }) => {
           </Text>
         </Box>
       </Box>
+      {item.status.isAvailable ? (
+        <Box position="absolute" bottom={12} right={30}>
+          <TouchableWithoutFeedback
+            onPress={() => {
+              Alert.alert("Warning", "Are you sure to cancel this order?", [
+                { text: "cancel", style: "cancel" },
+                {
+                  text: "yes",
+                  onPress: () => {
+                    dispatch(cancelOrderItemStatus(item.id));
+                  },
+                },
+              ]);
+            }}
+          >
+            <Text color="danger" fontSize={18} fontWeight="bold">
+              Cancel
+            </Text>
+          </TouchableWithoutFeedback>
+        </Box>
+      ) : null}
     </Box>
   );
 };
