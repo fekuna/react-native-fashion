@@ -9,23 +9,74 @@ export const signin = (data) => async (dispatch) => {
 
   console.log({ email, password });
 
-  const response = await api.post("/auth/signin", { email, password });
+  let response;
+  try {
+    response = await api.post("/auth/signin", { email, password });
+  } catch (err) {
+    if (err.response?.data?.statusCode === 403) {
+      Alert.alert("Login failed!", String(err.response.data.message));
+    }
+  }
 
-  const { access_token, refresh_token } = response?.data;
+  if (response?.status === 200) {
+    const { access_token, refresh_token } = response?.data;
 
-  await SecureStore.setItemAsync("accessToken", access_token);
-  await SecureStore.setItemAsync("refreshToken", refresh_token);
+    await SecureStore.setItemAsync("accessToken", access_token);
+    await SecureStore.setItemAsync("refreshToken", refresh_token);
 
-  const jwtDecoded = await jwtDecode(access_token);
+    const jwtDecoded = await jwtDecode(access_token);
+    dispatch(setCurrentUser(jwtDecoded));
+  }
+};
+
+export const signup = (data) => async (dispatch) => {
+  const { email, name, password, passwordConfirm } = data;
+  console.log("SIGNUP", data);
+
+  let response;
+  try {
+    response = await api.post("/auth/signup", {
+      email,
+      name,
+      password,
+      passwordConfirm,
+      roleId: 1,
+    });
+  } catch (err) {
+    if (err.response?.data) {
+      if (Array.isArray(err.response.data.message)) {
+        return Alert.alert(
+          "Something went wrong",
+          String(err.response.data.message[0])
+        );
+      }
+      Alert.alert("Something went wrong", String(err.response.data.message));
+    }
+  }
+
+  if (response?.status === 201) {
+    const { access_token, refresh_token } = response?.data;
+
+    await SecureStore.setItemAsync("accessToken", access_token);
+    await SecureStore.setItemAsync("refreshToken", refresh_token);
+    const jwtDecoded = await jwtDecode(access_token);
+
+    console.log("\njwtDecoded: ", jwtDecoded);
+    Alert.alert("Success", "Sign up success", [
+      {
+        text: "Ok",
+        onPress: () => {
+          dispatch(setCurrentUser(jwtDecoded));
+        },
+      },
+    ]);
+  }
 
   // console.log("\naccessToken: ", await SecureStore.getItemAsync("accessToken"));
   // console.log(
   //   "\nrefreshToken: ",
   //   await SecureStore.getItemAsync("refreshToken")
   // );
-  console.log("\njwtDecoded: ", jwtDecoded);
-
-  dispatch(setCurrentUser(jwtDecoded));
 };
 
 export const logout = () => async (dispatch) => {

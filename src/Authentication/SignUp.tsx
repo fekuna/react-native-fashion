@@ -9,33 +9,47 @@ import Container from "../components/Container";
 import { AuthNavigationProps } from "../components/Navigation";
 import Footer from "./components/Footer";
 import RNTextInput from "../components/Form/TextInput";
+import { useDispatch } from "react-redux";
+import { signup } from "../store/user/user.action";
 
 interface LoginFormProps {
   email: string;
+  name: string;
   password: string;
-  confirmPassword: string;
+  passwordConfirm: string;
 }
 
 const signupFormSchema: SchemaOf<LoginFormProps> = object({
-  email: string().email("Invalid email").required("Required"),
+  email: string().email("Invalid email").required("Email is Required"),
+  name: string()
+    .required("Email is Required")
+    .min(3, "Too Short!")
+    .max(35, "Too Long!"),
+  // password: string()
+  //   .required("Password Required")
+  //   .min(2, "Too Short!")
+  //   .max(35, "Too Long!"),
   password: string()
-    .min(2, "Too Short!")
-    .max(50, "Too Long!")
-    .required("Required"),
-  confirmPassword: string()
+    .required("Password Required")
+    .matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
+      message: "Password too weak",
+    }),
+  passwordConfirm: string()
     .equals([yupRef("password")], "Passwords don't match")
-    .required("Required"),
+    .required("COnfirm Password Required"),
 });
 
 const SignUp = ({ navigation }: AuthNavigationProps<"SignUp">) => {
   const { control, handleSubmit } = useForm<LoginFormProps>({
     resolver: yupResolver(signupFormSchema),
-    defaultValues: { email: "", password: "", confirmPassword: "" },
+    defaultValues: { email: "", password: "", passwordConfirm: "" },
     mode: "all",
   });
 
+  const dispatch = useDispatch();
+
   const password = useRef<TextInput>(null);
-  const confirmPassword = useRef<TextInput>(null);
+  const passwordConfirm = useRef<TextInput>(null);
   const footer = (
     <Footer
       title="Already have an account?"
@@ -44,7 +58,7 @@ const SignUp = ({ navigation }: AuthNavigationProps<"SignUp">) => {
     />
   );
 
-  const onSubmit = (data) => console.log("signUp: ", data);
+  const onSubmit = (data) => dispatch(signup(data));
 
   return (
     <Container pattern={1} {...{ footer }}>
@@ -82,6 +96,30 @@ const SignUp = ({ navigation }: AuthNavigationProps<"SignUp">) => {
         <Box marginBottom="m">
           <Controller
             control={control}
+            name="name"
+            render={({
+              field: { onChange, onBlur, value },
+              fieldState: { isTouched, error },
+            }) => (
+              <RNTextInput
+                icon="user"
+                placeholder="Enter your full name"
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={value}
+                error={error}
+                touched={isTouched}
+                autoCompleteType="email"
+                returnKeyType="next"
+                returnKeyLabel="next"
+                onSubmitEditing={() => password.current?.focus()}
+              />
+            )}
+          />
+        </Box>
+        <Box marginBottom="m">
+          <Controller
+            control={control}
             name="password"
             render={({
               field: { onChange, onBlur, value },
@@ -100,7 +138,7 @@ const SignUp = ({ navigation }: AuthNavigationProps<"SignUp">) => {
                 autoCapitalize="none"
                 returnKeyType="next"
                 returnKeyLabel="next"
-                onSubmitEditing={() => confirmPassword.current?.focus()}
+                onSubmitEditing={() => passwordConfirm.current?.focus()}
                 secureTextEntry
               />
             )}
@@ -108,13 +146,13 @@ const SignUp = ({ navigation }: AuthNavigationProps<"SignUp">) => {
         </Box>
         <Controller
           control={control}
-          name="confirmPassword"
+          name="passwordConfirm"
           render={({
             field: { onChange, onBlur, value },
             fieldState: { error, isTouched },
           }) => (
             <RNTextInput
-              ref={confirmPassword}
+              ref={passwordConfirm}
               icon="lock"
               placeholder="Confirm your password"
               onBlur={onBlur}
