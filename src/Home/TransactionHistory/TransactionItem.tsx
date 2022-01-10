@@ -48,7 +48,11 @@ const TransactionItem = ({ item }) => {
             </Text>
           ) : null}
           <Text variant="body"> - </Text>
-          <Text variant="title3" color="primary" textTransform="capitalize">
+          <Text
+            variant="title3"
+            color={item.status?.id === 4 ? "danger" : "primary"}
+            textTransform="capitalize"
+          >
             {item.status.name}
           </Text>
         </Box>

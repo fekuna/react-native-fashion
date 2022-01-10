@@ -11,7 +11,7 @@ interface TransactionProps {
 }
 
 const Transaction = ({ transaction }: TransactionProps) => {
-  // console.log("transaction", transaction);
+  console.log("transaction", transaction);
 
   const navigation = useNavigation<HomeScreenProp>();
 
