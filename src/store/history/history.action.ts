@@ -1,5 +1,5 @@
 import api from "../../utils/api";
-import { GET_HISTORY_TRANSACTION } from "./history.type";
+import { GET_GRAPH_DATA, GET_HISTORY_TRANSACTION } from "./history.type";
 
 export const getHistoryTransaction = () => async (dispatch) => {
   let response;
@@ -17,5 +17,25 @@ export const getHistoryTransaction = () => async (dispatch) => {
       type: GET_HISTORY_TRANSACTION,
       payload: response.data,
     });
+    return response.data;
+  }
+};
+
+export const getGraphData = () => async (dispatch) => {
+  let response;
+
+  try {
+    response = await api.get("/orders/graph");
+  } catch (err) {
+    console.log("getGraphData failed", err);
+  }
+
+  if (response?.status === 200) {
+    dispatch({
+      type: GET_GRAPH_DATA,
+      payload: response.data,
+    });
+
+    return response.data;
   }
 };

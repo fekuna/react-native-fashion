@@ -7,18 +7,20 @@ import { Box, Header, Text, useTheme } from "../../components";
 import { HomeNavigationProps } from "../../components/Navigation";
 import { TextInput } from "react-native-gesture-handler";
 import CategoryList from "./CategoryList";
-import plants from "./data/plants";
 import Card from "./Card";
 import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
 import { getProducts } from "../../store/product/product.action";
 
-const { width } = Dimensions.get("window");
-
-const categories = ["ALL", "BAJU", "CELANA", "SEPATU", "AKSESORIS"];
+import api from "../../utils/api";
+import { useIsFocused } from "@react-navigation/core";
+import { DELETE_ALL_PRODUCTS } from "../../store/product/product.type";
 
 const Products = ({ navigation }: HomeNavigationProps<"ProductList">) => {
+  const isFocused = useIsFocused();
   const theme = useTheme();
   const [categoryIndex, setCategoryIndex] = useState(0);
+  const [categories, setCategories] = useState([]);
+  const [searchText, setSearchText] = useState("");
 
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
@@ -29,7 +31,6 @@ const Products = ({ navigation }: HomeNavigationProps<"ProductList">) => {
   );
 
   const renderLoader = () => {
-    console.log("renderLoader", isLoading);
     return isLoading ? (
       <View
         style={{
@@ -43,22 +44,27 @@ const Products = ({ navigation }: HomeNavigationProps<"ProductList">) => {
   };
 
   const loadMoreItem = () => {
-    console.log("loadMoreItem", meta);
     if (currentPage <= meta.lastPage) {
-      console.log("mashook");
       setCurrentPage(currentPage + 1);
     }
   };
 
   const loadProducts = async () => {
     setIsLoading(true);
-    await dispatch(getProducts({ page: currentPage, take: 6 }));
+    await dispatch(
+      getProducts({ page: currentPage, take: 6, categoryId: categoryIndex })
+    );
     setIsLoading(false);
   };
 
   useEffect(() => {
     if (currentPage <= meta.lastPage || 2) loadProducts();
-  }, [currentPage]);
+
+    (async () => {
+      const getCategories = await api.get("/categories");
+      setCategories([{ id: 0, name: "all" }, ...getCategories.data]);
+    })();
+  }, [currentPage, categoryIndex]);
 
   return (
     <Box flex={1} backgroundColor="background">
@@ -83,15 +89,29 @@ const Products = ({ navigation }: HomeNavigationProps<"ProductList">) => {
         <Icon name="search" size={25} style={{ marginLeft: 20 }} />
         <TextInput
           placeholder="Search"
+          onChangeText={(textData) => setSearchText(textData)}
+          value={searchText}
           style={{
             fontSize: 18,
             fontWeight: "bold",
             flex: 1,
             color: theme.colors.body,
           }}
+          onSubmitEditing={() => {
+            setSearchText("");
+            navigation.navigate("ProductSearch", { searchText });
+          }}
         />
       </Box>
-      <CategoryList categories={categories} />
+      <CategoryList
+        categoryIndex={categoryIndex}
+        categories={categories}
+        changeCategory={(index) => {
+          setCurrentPage(1);
+          setCategoryIndex(index);
+          dispatch({ type: DELETE_ALL_PRODUCTS });
+        }}
+      />
       <FlatList
         columnWrapperStyle={{
           justifyContent: "space-between",

@@ -39,7 +39,7 @@ const Slider = ({ images }) => {
           images.map((image, index) => (
             <Image
               key={index}
-              resizeMode="stretch"
+              resizeMode="contain"
               source={{
                 uri: `${API_URL}/api/products/${image.imgPath}`,
               }}
@@ -50,7 +50,7 @@ const Slider = ({ images }) => {
           ))
         ) : (
           <Image
-            resizeMode="stretch"
+            resizeMode="contain"
             source={{
               uri: `${API_URL}/api/products/product-default.png`,
             }}

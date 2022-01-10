@@ -15,6 +15,9 @@ import { getCartItems, removeCartItem } from "../../store/cart/cart.action";
 import { CommonActions, StackActions } from "@react-navigation/routers";
 import { useFocusEffect, useIsFocused } from "@react-navigation/core";
 
+import api from "../../utils/api";
+import { setCurrentUser } from "../../store/user/user.action";
+
 const height = 100 * aspectRatio;
 const d = "M 0 0 A 50 50 0 0 0 50 50 H 325 A 50 50 0 0 1 375 100 V 0 Z";
 
@@ -28,12 +31,30 @@ const Cart = ({ navigation }: HomeNavigationProps<"Cart">) => {
   const totalItems = useSelector(
     (state: RootStateOrAny) => state.cart.meta?.total
   );
+  const user = useSelector((state: RootStateOrAny) => state.auth.user);
+
   const isFocused = useIsFocused();
 
+  const getUser = async () => {
+    let response;
+    try {
+      response = await api.get(`/users/${user.sub}`);
+    } catch (err) {
+      console.log("getUser err", err.response);
+    }
+
+    console.log("getUser", response?.status);
+
+    if (response?.status === 200) {
+      console.log("Checkout");
+      dispatch(setCurrentUser({ ...response.data, sub: response.data.id }));
+    }
+  };
+
   useEffect(() => {
-    console.log("cart isFocused: ", isFocused);
     if (isFocused) {
       dispatch(getCartItems());
+      getUser();
     }
   }, [isFocused]);
 
@@ -48,33 +69,36 @@ const Cart = ({ navigation }: HomeNavigationProps<"Cart">) => {
             onPress: () => {
               // Remove the home route from the stack
               navigation.goBack();
-              // navigation.dispatch();
             },
           }}
         />
       </Box>
       <Box flex={1}>
-        <FlatList
-          contentContainerStyle={{
-            paddingVertical: 50 * aspectRatio,
-          }}
-          showsVerticalScrollIndicator={false}
-          data={cartItems}
-          renderItem={({ item: it, index }) => {
-            // console.log("renderItem", it);
-            return (
-              <Item
-                key={it.id}
-                onDelete={async () => {
-                  // items.splice(index, 1);
-                  // setItems(items.concat());
-                  await dispatch(removeCartItem(it.id));
-                }}
-                item={it}
-              />
-            );
-          }}
-        />
+        {cartItems.length > 0 ? (
+          <FlatList
+            contentContainerStyle={{
+              paddingVertical: 50 * aspectRatio,
+            }}
+            showsVerticalScrollIndicator={false}
+            data={cartItems}
+            renderItem={({ item: it, index }) => {
+              return (
+                <Item
+                  key={it.id}
+                  onDelete={async () => {
+                    await dispatch(removeCartItem(it.id));
+                  }}
+                  item={it}
+                />
+              );
+            }}
+          />
+        ) : (
+          <Box flex={1} justifyContent="center" alignItems="center">
+            <Text>No product found</Text>
+          </Box>
+        )}
+
         <Box
           style={{
             position: "absolute",

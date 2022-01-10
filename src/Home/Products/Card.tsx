@@ -89,7 +89,12 @@ const Card = ({ item }) => {
           </Box>
 
           <Box flex={1} marginHorizontal="s">
-            <Text fontWeight="bold" fontSize={17} marginTop="m">
+            <Text
+              numberOfLines={1}
+              fontWeight="bold"
+              fontSize={17}
+              marginTop="m"
+            >
               {/* {plant.name} */}
               {item.title}
             </Text>
@@ -97,7 +102,7 @@ const Card = ({ item }) => {
           </Box>
         </Box>
       </TouchableOpacity>
-      <Box
+      {/* <Box
         style={{
           position: "absolute",
           bottom: 5,
@@ -121,7 +126,7 @@ const Card = ({ item }) => {
             +
           </Text>
         </Pressable>
-      </Box>
+      </Box> */}
     </Box>
   );
 };

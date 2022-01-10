@@ -1,14 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 import { ScrollView } from "react-native";
 import { Box, Text, TextInput } from "../../components";
-import CheckboxGroup from "./CheckboxGroup";
+import CheckboxGroup from "../../components/CheckboxGroup";
 
-const genders = [
-  { value: "male", label: "Male" },
-  { value: "female", label: "Female" },
+// const genders = [
+//   { value: "male", label: "Male" },
+//   { value: "female", label: "Female" },
+// ];
+const gendersData = [
+  { id: 1, name: "male" },
+  { id: 2, name: "female" },
 ];
 
 const PersonalInfo = () => {
+  const [genders, setGenders] = useState([]);
+
   return (
     <ScrollView>
       <Box padding="m">
@@ -32,7 +38,12 @@ const PersonalInfo = () => {
             autoCompleteType="street-address"
           />
         </Box>
-        <CheckboxGroup options={genders} radio />
+        <CheckboxGroup
+          options={gendersData}
+          radio
+          selectedValue={genders}
+          setSelectedValue={setGenders}
+        />
       </Box>
     </ScrollView>
   );

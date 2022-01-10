@@ -1,4 +1,4 @@
-import { GET_PRODUCTS } from "./product.type";
+import { DELETE_ALL_PRODUCTS, GET_PRODUCTS } from "./product.type";
 
 const initialState = {
   items: [],
@@ -12,6 +12,12 @@ export default (state = initialState, action) => {
         ...state,
         items: [...state.items, ...action.payload.data],
         meta: action.payload.meta,
+      };
+    case DELETE_ALL_PRODUCTS:
+      return {
+        ...state,
+        items: [],
+        meta: {},
       };
     default:
       return state;

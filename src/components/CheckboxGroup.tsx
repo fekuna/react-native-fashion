@@ -1,38 +1,46 @@
 import React, { useState } from "react";
-import { Box, Button, useTheme } from "../../components";
+import { Button } from ".";
+import OptionButton from "./OptionButton";
+import { Box, useTheme } from "./Theme";
 
 interface CheckboxGroupProps {
-  options: { value: string; label: string }[];
+  options: { id: number; name: string }[];
   radio?: boolean;
+  selectedValue: any;
+  setSelectedValue: any;
 }
 
-const CheckboxGroup = ({ options, radio }: CheckboxGroupProps) => {
+const CheckboxGroup = ({
+  options,
+  radio,
+  selectedValue,
+  setSelectedValue,
+}: CheckboxGroupProps) => {
   const { spacing } = useTheme();
-  const [selectedValue, setSelectedValue] = useState<string[]>([]);
 
   return (
     <Box flexDirection="row" flexWrap="wrap" marginTop="s">
-      {options.map(({ value, label }) => {
-        const index = selectedValue.indexOf(value);
+      {options.map((option, idx) => {
+        const index = selectedValue.indexOf(option);
         const isSelected = index !== -1;
 
         return (
-          <Button
-            key={value}
+          <OptionButton
+            key={idx}
             variant={isSelected ? "primary" : "default"}
             onPress={() => {
               if (radio) {
-                setSelectedValue([value]);
+                setSelectedValue([option]);
               } else {
                 if (isSelected) {
                   selectedValue.splice(index, 1);
                 } else {
-                  selectedValue.push(value);
+                  selectedValue.push(option);
                 }
                 setSelectedValue([...selectedValue]);
               }
             }}
-            label={label}
+            label={option.name}
             style={{
               width: "auto",
               height: "auto",

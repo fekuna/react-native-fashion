@@ -5,14 +5,19 @@ interface getProductProps {
   page?: number;
   take?: number;
   keyword?: string;
+  categoryId?: number;
 }
 
 export const getProducts =
-  ({ page, take, keyword }: getProductProps) =>
+  ({ page, take, keyword = "", categoryId }: getProductProps) =>
   async (dispatch) => {
+    console.log("getProductAction", { page, take, keyword, categoryId });
+
     let response;
     try {
-      response = await api.get(`/products?page=${page}&take=${take}`);
+      response = await api.get(
+        `/products?page=${page}&take=${take}&keyword=${keyword}&categoryId=${categoryId}`
+      );
     } catch (err) {
       console.log("failed to get products");
     }

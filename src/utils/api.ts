@@ -36,7 +36,7 @@ instance.interceptors.response.use(
   },
   async (err) => {
     const originalConfig = err.config;
-    console.log("Interceptors Response err", originalConfig.url);
+    console.log("Interceptors Response err", originalConfig);
 
     if (originalConfig.url !== "/auth/signin" && err.response) {
       console.log("Api APi", err.response.status);
@@ -73,9 +73,9 @@ instance.interceptors.response.use(
 
           return instance(originalConfig);
         } catch (err) {
-          console.log("Inside catch", err.response);
+          // console.log("Inside catch", err.response);
 
-          if (err.response.status === 401) {
+          if (err.response?.status === 401) {
             console.log("mashook");
             await SecureStore.deleteItemAsync("accessToken");
             await SecureStore.deleteItemAsync("refreshToken");

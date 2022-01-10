@@ -33,12 +33,15 @@ export type AuthRoutes = {
 export type HomeRoutes = {
   ProductList: undefined;
   ProductDetail: undefined;
+  ProductSearch: any;
   OutfitIdeas: undefined;
   FavoriteOutfits: undefined;
   TransactionHistory: undefined;
+  TransactionItemList: any;
   EditProfile: undefined;
   Settings: undefined;
   Cart: undefined;
+  EditShippingAddress: any;
 };
 
 export type HomeScreenProp = DrawerNavigationProp<HomeRoutes, keyof HomeRoutes>;

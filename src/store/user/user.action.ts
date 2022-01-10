@@ -1,5 +1,6 @@
 import * as SecureStore from "expo-secure-store";
 import jwtDecode from "jwt-decode";
+import { Alert } from "react-native";
 import api from "../../utils/api";
 import { SIGN_IN } from "./user.type";
 
@@ -17,11 +18,11 @@ export const signin = (data) => async (dispatch) => {
 
   const jwtDecoded = await jwtDecode(access_token);
 
-  console.log("\naccessToken: ", await SecureStore.getItemAsync("accessToken"));
-  console.log(
-    "\nrefreshToken: ",
-    await SecureStore.getItemAsync("refreshToken")
-  );
+  // console.log("\naccessToken: ", await SecureStore.getItemAsync("accessToken"));
+  // console.log(
+  //   "\nrefreshToken: ",
+  //   await SecureStore.getItemAsync("refreshToken")
+  // );
   console.log("\njwtDecoded: ", jwtDecoded);
 
   dispatch(setCurrentUser(jwtDecoded));
@@ -50,6 +51,26 @@ export const setCurrentUser = (decoded) => {
   return { type: SIGN_IN, payload: decoded };
 };
 
-export const testAction = () => {
-  console.log("hello");
-};
+interface updateUserType {
+  name?: string;
+  email?: string;
+  address?: string;
+}
+
+export const updateUser =
+  (userId: string, data: updateUserType) => async (dispatch) => {
+    let response;
+    try {
+      response = await api.put(`/users/${userId}`, data);
+    } catch (err) {
+      console.log("inside updateUser function error", err.response?.data);
+      Alert.alert("Update failed", "Something went wrong");
+      // return Promise.reject(err);
+    }
+
+    console.log("Inside updateUser function", response?.status);
+
+    if (response?.status === 200) {
+      Alert.alert("Update success");
+    }
+  };

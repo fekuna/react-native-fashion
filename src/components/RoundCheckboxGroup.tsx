@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View } from "react-native";
 import { BorderlessButton } from "react-native-gesture-handler";
 import { Feather as Icon } from "@expo/vector-icons";
-import { Box, Text, useTheme } from "../../components";
+import { Box, Text, useTheme } from "./Theme";
 
 interface RoundCheckboxGroupProps {
   options: string[];
