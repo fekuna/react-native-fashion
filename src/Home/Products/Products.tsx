@@ -8,11 +8,16 @@ import { HomeNavigationProps } from "../../components/Navigation";
 import { TextInput } from "react-native-gesture-handler";
 import CategoryList from "./CategoryList";
 import Card from "./Card";
-import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
+import {
+  RootStateOrAny,
+  shallowEqual,
+  useDispatch,
+  useSelector,
+} from "react-redux";
 import { getProducts } from "../../store/product/product.action";
 
 import api from "../../utils/api";
-import { useIsFocused } from "@react-navigation/core";
+import { useFocusEffect, useIsFocused } from "@react-navigation/core";
 import { DELETE_ALL_PRODUCTS } from "../../store/product/product.type";
 
 const Products = ({ navigation }: HomeNavigationProps<"ProductList">) => {
@@ -27,7 +32,8 @@ const Products = ({ navigation }: HomeNavigationProps<"ProductList">) => {
 
   const dispatch = useDispatch();
   const { items, meta } = useSelector(
-    (state: RootStateOrAny) => state.products
+    (state: RootStateOrAny) => state.products,
+    shallowEqual
   );
 
   const renderLoader = () => {
@@ -64,7 +70,24 @@ const Products = ({ navigation }: HomeNavigationProps<"ProductList">) => {
       const getCategories = await api.get("/categories");
       setCategories([{ id: 0, name: "all" }, ...getCategories.data]);
     })();
+
+    return () => {
+      console.log("product unmount");
+    };
   }, [currentPage, categoryIndex]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      // console.log("useFocusEffect mount");
+
+      return () => {
+        setCurrentPage(1);
+        dispatch({
+          type: DELETE_ALL_PRODUCTS,
+        });
+      };
+    }, [])
+  );
 
   return (
     <Box flex={1} backgroundColor="background">

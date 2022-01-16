@@ -1,5 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
-import React from "react";
+import React, { useState } from "react";
 import { MaterialIcons as Icon } from "@expo/vector-icons";
 
 import { Box, Text, useTheme } from "../../components";
@@ -7,16 +7,41 @@ import { HomeScreenProp } from "../../components/Navigation";
 import { Dimensions, Image, Pressable, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { API_URL } from "../../utils/api";
-import { useDispatch } from "react-redux";
+import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
 import { addItemToCart } from "../../store/cart/cart.action";
+
+import api from "../../utils/api";
 
 const { width } = Dimensions.get("window");
 
 const Card = ({ item }) => {
+  // console.log("Card", item);
   const navigation = useNavigation<HomeScreenProp>();
   const theme = useTheme();
 
+  const user = useSelector((state: RootStateOrAny) => state.auth.user);
+
+  // console.log(user);
+
+  const [isFavorite, setIsFavorite] = useState(
+    item.user_favorites.some((favorite) => favorite.id === user.sub)
+  );
+
   const dispatch = useDispatch();
+
+  const favoriteHandler = async (productId) => {
+    let response;
+    try {
+      response = await api.post(`/products/favorite/${productId}`);
+    } catch (err) {
+      console.log("Error add to favorite", err);
+    }
+
+    if (response?.status === 201) {
+      console.log("add to favorite success");
+      setIsFavorite((favorite) => !favorite);
+    }
+  };
 
   const productImage =
     item.product_images.length > 0
@@ -34,7 +59,7 @@ const Card = ({ item }) => {
           zIndex: 100,
           alignItems: "flex-end",
         }}
-        onPress={() => console.log("aoskd")}
+        onPress={() => favoriteHandler(item.id)}
       >
         <Box
           width={30}
@@ -44,10 +69,9 @@ const Card = ({ item }) => {
           alignItems="center"
           style={[
             {
-              // backgroundColor: plant.like
-              //   ? "rgba(245, 42, 42,0.2)"
-              //   : "rgba(0,0,0,0.2) ",
-              backgroundColor: "rgba(0,0,0,0.2)",
+              backgroundColor: isFavorite
+                ? "rgba(255,0,88, 0.2)"
+                : "rgba(0,0,0,0.2)",
             },
           ]}
         >
@@ -55,7 +79,7 @@ const Card = ({ item }) => {
             name="favorite"
             size={18}
             // color={plant.like ? theme.colors.love : theme.colors.body}
-            color={theme.colors.body}
+            color={isFavorite ? theme.colors.danger : theme.colors.body}
           />
         </Box>
       </Pressable>
@@ -102,31 +126,6 @@ const Card = ({ item }) => {
           </Box>
         </Box>
       </TouchableOpacity>
-      {/* <Box
-        style={{
-          position: "absolute",
-          bottom: 5,
-          right: 10,
-        }}
-      >
-        <Pressable
-          style={{
-            height: 25,
-            width: 50,
-            backgroundColor: theme.colors.green,
-            borderRadius: 5,
-            justifyContent: "center",
-            alignItems: "center",
-            marginRight: 5,
-            zIndex: 100,
-          }}
-          onPress={() => dispatch(addItemToCart({ productId: item.id }))}
-        >
-          <Text fontSize={18} color="background" fontWeight="bold">
-            +
-          </Text>
-        </Pressable>
-      </Box> */}
     </Box>
   );
 };

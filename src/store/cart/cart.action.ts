@@ -12,7 +12,7 @@ interface AddItemToCart {
 export const addItemToCart =
   ({ productId, quantity = 1, size = [], image }: AddItemToCart) =>
   async (dispatch) => {
-    console.log("addItemToCart", { productId, quantity, image });
+    console.log("addItemToCart", { productId, quantity, image, size });
     let response;
     try {
       response = await api.post("/cart", {

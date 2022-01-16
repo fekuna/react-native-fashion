@@ -2,6 +2,7 @@ import * as SecureStore from "expo-secure-store";
 import jwtDecode from "jwt-decode";
 import { Alert } from "react-native";
 import api from "../../utils/api";
+import { DELETE_ALL_PRODUCTS } from "../product/product.type";
 import { SIGN_IN } from "./user.type";
 
 export const signin = (data) => async (dispatch) => {
@@ -95,6 +96,9 @@ export const logout = () => async (dispatch) => {
     await SecureStore.deleteItemAsync("refreshToken");
 
     dispatch(setCurrentUser({}));
+    dispatch({
+      type: DELETE_ALL_PRODUCTS,
+    });
   }
 };
 

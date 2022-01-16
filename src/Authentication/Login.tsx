@@ -150,7 +150,10 @@ const Login = ({ navigation }: AuthNavigationProps<"Login">) => {
             onChange={() => setRemember((prevState) => !prevState)}
           /> */}
           <BorderlessButton
-            onPress={() => navigation.navigate("ForgotPassword")}
+            onPress={() => {
+              // navigation.navigate("ForgotPassword");
+              navigation.push("ForgotPassword");
+            }}
           >
             <Text variant="button" color="primary">
               Forgot Password

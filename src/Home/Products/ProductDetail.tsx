@@ -190,7 +190,7 @@ const ProductDetail = ({ route: { params } }) => {
               if (params.sizes.length > 0 && size.length < 1) {
                 console.log("mashook");
                 allowSubmit = false;
-                Alert.alert(null, "Please choose size");
+                Alert.alert(null, "Please choose your size");
               }
 
               if (allowSubmit && quantity > 0) {

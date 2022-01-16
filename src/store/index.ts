@@ -5,6 +5,7 @@ import userReducer from "./user";
 import productReducer from "./product";
 import cartReducer from "./cart/cart.reducer";
 import historyReducer from "./history";
+import favoriteReducer from "./favorite";
 
 let composeEnhancers = compose;
 const middleware = [thunk];
@@ -18,6 +19,7 @@ if (__DEV__) {
 const rootReducer = combineReducers({
   auth: userReducer,
   products: productReducer,
+  productFavorites: favoriteReducer,
   cart: cartReducer,
   transactionHistories: historyReducer,
 });
