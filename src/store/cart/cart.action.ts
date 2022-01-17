@@ -56,6 +56,7 @@ export const removeCartItem = (id: number) => async (dispatch) => {
   }
 
   if (response?.status === 200) {
+    dispatch(getCartItems());
     console.log(`cart item with ID ${id} removed`);
   }
 };

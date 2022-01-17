@@ -103,7 +103,6 @@ const TransactionHistory = ({
   // console.log("TransactionHistories", { items, graph });
 
   if (isLoading) {
-    console.log("hehe");
     return <ActivityIndicator size="large" color="#aaa" />;
   }
 

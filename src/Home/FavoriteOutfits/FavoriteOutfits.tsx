@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Alert, Dimensions, ScrollView, View } from "react-native";
+import { Alert, Dimensions, FlatList, ScrollView, View } from "react-native";
 import {
   Transition,
   Transitioning,
@@ -84,41 +84,64 @@ const FavoriteOutfits = ({
       />
       <Box flex={1}>
         {outfits.length > 0 ? (
-          <ScrollView
+          // <ScrollView
+          //   contentContainerStyle={{
+          //     paddingHorizontal: theme.spacing.s,
+          //     paddingBottom: footerHeight,
+          //   }}
+          // >
+          //   <Transitioning.View ref={list} {...{ transition }}>
+          //     <Box flexDirection="row">
+          //       <Box marginRight="m">
+          //         {outfits
+          //           .filter((_, i) => i % 2 !== 0)
+          //           .map((outfit) => (
+          //             <Outfit
+          //               key={outfit.id}
+          //               outfit={outfit}
+          //               width={width}
+          //               removeHandler={removeFavoriteHandler}
+          //             />
+          //           ))}
+          //       </Box>
+          //       <Box>
+          //         {outfits
+          //           .filter((_, i) => i % 2 === 0)
+          //           .map((outfit) => (
+          //             <Outfit
+          //               key={outfit.id}
+          //               outfit={outfit}
+          //               width={width}
+          //               removeHandler={removeFavoriteHandler}
+          //             />
+          //           ))}
+          //       </Box>
+          //     </Box>
+          //   </Transitioning.View>
+          // </ScrollView>
+          <FlatList
             contentContainerStyle={{
               paddingHorizontal: theme.spacing.s,
               paddingBottom: footerHeight,
             }}
-          >
-            <Transitioning.View ref={list} {...{ transition }}>
-              <Box flexDirection="row">
-                <Box marginRight="m">
-                  {outfits
-                    .filter((_, i) => i % 2 !== 0)
-                    .map((outfit) => (
-                      <Outfit
-                        key={outfit.id}
-                        outfit={outfit}
-                        width={width}
-                        removeHandler={removeFavoriteHandler}
-                      />
-                    ))}
-                </Box>
-                <Box>
-                  {outfits
-                    .filter((_, i) => i % 2 === 0)
-                    .map((outfit) => (
-                      <Outfit
-                        key={outfit.id}
-                        outfit={outfit}
-                        width={width}
-                        removeHandler={removeFavoriteHandler}
-                      />
-                    ))}
-                </Box>
-              </Box>
-            </Transitioning.View>
-          </ScrollView>
+            numColumns={2}
+            data={outfits}
+            keyExtractor={(item) => item.id + Math.random()}
+            renderItem={({ item }) => {
+              return (
+                <Transitioning.View ref={list} {...{ transition }}>
+                  <Box marginRight="m">
+                    <Outfit
+                      key={item.id}
+                      outfit={item}
+                      width={width}
+                      removeHandler={removeFavoriteHandler}
+                    />
+                  </Box>
+                </Transitioning.View>
+              );
+            }}
+          />
         ) : (
           <View
             style={{

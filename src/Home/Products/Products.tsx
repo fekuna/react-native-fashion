@@ -51,7 +51,7 @@ const Products = ({ navigation }: HomeNavigationProps<"ProductList">) => {
 
   const loadMoreItem = () => {
     if (currentPage <= meta.lastPage) {
-      setCurrentPage(currentPage + 1);
+      setCurrentPage((prevState) => prevState + 1);
     }
   };
 
@@ -63,28 +63,43 @@ const Products = ({ navigation }: HomeNavigationProps<"ProductList">) => {
     setIsLoading(false);
   };
 
-  useEffect(() => {
-    if (currentPage <= meta.lastPage || 2) loadProducts();
+  // useEffect(() => {
+  //   console.log("useEffect Mount");
+  //   if (currentPage <= meta.lastPage || 2) loadProducts();
 
-    (async () => {
-      const getCategories = await api.get("/categories");
-      setCategories([{ id: 0, name: "all" }, ...getCategories.data]);
-    })();
+  //   (async () => {
+  //     const getCategories = await api.get("/categories");
+  //     setCategories([{ id: 0, name: "all" }, ...getCategories.data]);
+  //   })();
 
-    return () => {
-      console.log("product unmount");
-    };
-  }, [currentPage, categoryIndex]);
+  //   return () => {
+  //     console.log("useEffect unmount");
+  //   };
+  // }, [currentPage, categoryIndex]);
 
   useFocusEffect(
     React.useCallback(() => {
-      // console.log("useFocusEffect mount");
+      if (currentPage <= meta.lastPage || 2) loadProducts();
+
+      (async () => {
+        const getCategories = await api.get("/categories");
+        setCategories([{ id: 0, name: "all" }, ...getCategories.data]);
+      })();
+
+      return () => {};
+    }, [currentPage, categoryIndex])
+  );
+
+  useFocusEffect(
+    React.useCallback(() => {
+      console.log("useFocusEffect mount");
 
       return () => {
-        setCurrentPage(1);
+        console.log("useFocusEffect unmount");
         dispatch({
           type: DELETE_ALL_PRODUCTS,
         });
+        setCurrentPage(1);
       };
     }, [])
   );

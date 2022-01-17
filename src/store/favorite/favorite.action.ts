@@ -11,7 +11,6 @@ export const getProductFavorites = () => async (dispatch) => {
 
   if (response?.status === 200) {
     // console.log(response.data);
-    console.log("hehe");
     dispatch({ type: GET_PRODUCT_FAVORITES, payload: response.data });
   }
 };
