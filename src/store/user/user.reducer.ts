@@ -1,4 +1,4 @@
-import { SIGN_IN } from "./user.type";
+import { SIGN_IN, UPDATE_CURRENT_USER } from "./user.type";
 
 const initialState = {
   isAuthenticated: false,
@@ -12,6 +12,11 @@ export default (state = initialState, action) => {
         ...state,
         isAuthenticated: !!action.payload.sub,
         user: action.payload,
+      };
+    case UPDATE_CURRENT_USER:
+      return {
+        ...state,
+        user: { ...state.user, ...action.payload },
       };
     default:
       return state;

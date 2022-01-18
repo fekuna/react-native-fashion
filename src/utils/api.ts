@@ -4,7 +4,7 @@ import store from "../store";
 import { logout } from "../store/user/user.action";
 import { SIGN_IN } from "../store/user/user.type";
 
-export const API_URL = "http://192.168.7.128:8000";
+export const API_URL = "http://192.168.1.9:8000";
 
 const instance = axios.create({
   baseURL: `${API_URL}/api`,

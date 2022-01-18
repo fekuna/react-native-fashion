@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button } from ".";
 import OptionButton from "./OptionButton";
 import { Box, useTheme } from "./Theme";
@@ -17,22 +17,28 @@ const CheckboxGroup = ({
   setSelectedValue,
 }: CheckboxGroupProps) => {
   const { spacing } = useTheme();
+  // const [isSelected, setIsSelected] = useState(false);
+  const isSelected = useRef(false);
+
+  useEffect(() => {}, [selectedValue]);
 
   return (
     <Box flexDirection="row" flexWrap="wrap" marginTop="s">
       {options.map((option, idx) => {
+        // console.log("CheckboxGroup", selectedValue);
         const index = selectedValue.indexOf(option);
-        const isSelected = index !== -1;
+        // setIsSelected(index !== -1);
+        isSelected.current = index !== -1;
 
         return (
           <OptionButton
             key={idx}
-            variant={isSelected ? "primary" : "default"}
+            variant={isSelected.current ? "primary" : "default"}
             onPress={() => {
               if (radio) {
                 setSelectedValue([option]);
               } else {
-                if (isSelected) {
+                if (isSelected.current) {
                   selectedValue.splice(index, 1);
                 } else {
                   selectedValue.push(option);

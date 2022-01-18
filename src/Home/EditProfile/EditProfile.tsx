@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { DrawerActions } from "@react-navigation/native";
-import { Dimensions } from "react-native";
+import { Alert, Dimensions, Image, Pressable, View } from "react-native";
 
 import { HomeNavigationProps } from "../../components/Navigation";
 import { Box, Header, Text, useTheme } from "../../components";
@@ -8,14 +8,122 @@ import Tabs from "./Tabs";
 import Configuration from "./Configuration";
 import PersonalInfo from "./PersonalInfo";
 
+import { useFocusEffect } from "@react-navigation/core";
+
+import api, { API_URL } from "../../utils/api";
+import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
+import { UPDATE_CURRENT_USER } from "../../store/user/user.type";
+import EditPassword from "./ChangePassword";
+import RoundIcon from "../../components/RoundIcon";
+
+import * as ImagePicker from "expo-image-picker";
+import FormData from "form-data";
+
 const { width } = Dimensions.get("window");
 const tabs = [
-  { id: "config", title: "Configuration" },
   { id: "info", title: "Personal Info" },
+  { id: "password", title: "Password" },
 ];
 
+interface userDataType {
+  id?: string;
+  name?: string;
+  email?: string;
+  address?: string;
+  img?: string;
+  rt_hash?: string;
+}
+
 const EditProfile = ({ navigation }: HomeNavigationProps<"EditProfile">) => {
+  const [userData, setUserData] = useState({
+    id: "",
+    name: "",
+    email: "",
+    address: "",
+    img: "",
+    rt_hash: "",
+  });
   const theme = useTheme();
+
+  const user = useSelector((state: RootStateOrAny) => state.auth.user);
+
+  const dispatch = useDispatch();
+
+  const loadUser = async () => {
+    let response;
+    try {
+      response = await api.get(`/users/${user.sub}`);
+    } catch (err) {
+      Alert.alert(`failed to get current user`);
+    }
+
+    if (response?.status === 200) {
+      dispatch({
+        type: UPDATE_CURRENT_USER,
+        payload: response.data,
+      });
+      // setUserData(response.data);
+    }
+  };
+
+  let openImagePickerAsync = async () => {
+    let permissionResult =
+      await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (permissionResult.granted === false) {
+      alert("Permission to access camera roll is required!");
+      return;
+    }
+
+    let pickerResult = await ImagePicker.launchImageLibraryAsync();
+
+    if (pickerResult.cancelled === true) {
+      return;
+    }
+
+    // ImagePicker saves the taken photo to disk and returns a local URI to it
+    let localUri = pickerResult.uri;
+    let filename = localUri.split("/").pop();
+
+    // Infer the type of the image
+    let match = /\.(\w+)$/.exec(filename);
+    let type = match ? `image/${match[1]}` : `image`;
+
+    let formData = new FormData();
+    formData.append("image", { uri: localUri, name: filename, type });
+
+    let response;
+    try {
+      response = await api.put("/users/img", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+    } catch (err) {
+      console.log(err.response);
+      Alert.alert(`failed to upload user`);
+    }
+
+    if (response?.status === 200) {
+      Alert.alert(`update profile photo success`, null, [
+        {
+          onPress: () => {
+            loadUser();
+          },
+        },
+      ]);
+    }
+
+    console.log("Picker Result: ", { localUri, filename, type });
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      loadUser();
+    }, [])
+  );
+
+  console.log("userData", user);
 
   return (
     <Box flex={1} backgroundColor="background">
@@ -48,19 +156,50 @@ const EditProfile = ({ navigation }: HomeNavigationProps<"EditProfile">) => {
           style={{ borderRadius: 50 }}
           width={100}
           height={100}
-        />
+        >
+          <Image
+            source={{
+              uri: `${API_URL}/api/${user.img}`,
+            }}
+            style={{
+              // backgroundColor: "red",
+              width: 100,
+              borderRadius: 50,
+              height: 100,
+              // overflow: "hidden",
+            }}
+          />
+          <View
+            style={{
+              position: "absolute",
+              left: 0,
+              bottom: -5,
+              zIndex: 99,
+            }}
+          >
+            <Pressable onPress={openImagePickerAsync}>
+              <RoundIcon
+                name="pen-tool"
+                backgroundColor="primary"
+                color="background"
+                size={30}
+              />
+            </Pressable>
+          </View>
+        </Box>
         <Box marginVertical="m" style={{ marginTop: 50 + theme.spacing.m }}>
           <Text variant="title1" textAlign="center">
-            Mike Peter
+            {user.name}
           </Text>
           <Text variant="body" textAlign="center">
-            mike@fashionvista.com
+            {user.email}
           </Text>
         </Box>
       </Box>
       <Tabs tabs={tabs}>
-        <Configuration />
-        <PersonalInfo />
+        <PersonalInfo loadUser={loadUser} />
+        {/* <Configuration /> */}
+        <EditPassword />
       </Tabs>
     </Box>
   );

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Alert, ScrollView } from "react-native";
 import { RootStateOrAny, useSelector } from "react-redux";
-import { object, SchemaOf, string } from "yup";
+import { object, SchemaOf, string, ref as yupRef } from "yup";
 import { Box, Button, Text, TextInput } from "../../components";
 import CheckboxGroup from "../../components/CheckboxGroup";
 import api from "../../utils/api";
@@ -17,60 +17,56 @@ const gendersData = [
   { id: 2, name: "female" },
 ];
 
-interface personalInfoFormProps {
-  name: string;
-  email: string;
-  address: string;
+interface changePasswordFormProps {
+  currentPassword: string;
+  newPassword: string;
+  passwordConfirm: string;
 }
 
-const personalInfoSchema: SchemaOf<personalInfoFormProps> = object({
-  name: string()
-    .required("Name is required")
-    .min(2, "Too Short!")
-    .max(25, "Too Long!"),
-  email: string().required("Email is required").email("Invalid email"),
-  address: string()
-    .required("Address is required")
-    .min(5, "Too Short!")
-    .max(60, "Too Long!"),
+const changePasswordSchema: SchemaOf<changePasswordFormProps> = object({
+  currentPassword: string().required("Current password is required"),
+  newPassword: string()
+    .required("Password Required")
+    .min(4)
+    .max(20)
+    .matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
+      message: "Password too weak",
+    }),
+  passwordConfirm: string()
+    .min(4)
+    .max(20)
+    .equals([yupRef("newPassword")], "Passwords don't match")
+    .required("Confirm Password Required"),
 });
 
-const PersonalInfo = ({ loadUser }) => {
+const EditPassword = () => {
   const user = useSelector((state: RootStateOrAny) => state.auth.user);
 
-  const { control, handleSubmit } = useForm<personalInfoFormProps>({
-    resolver: yupResolver(personalInfoSchema),
-    defaultValues: {
-      name: user.name,
-      address: user.address,
-      email: user.email,
-    },
+  const { control, handleSubmit, reset } = useForm<changePasswordFormProps>({
+    resolver: yupResolver(changePasswordSchema),
     mode: "all",
   });
 
   const [genders, setGenders] = useState([]);
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (data, e) => {
     let response;
     try {
-      response = await api.put(`/users/${user.sub}`, {
-        name: data.name,
-        email: data.email,
-        address: data.address,
-        genderId: genders[0]?.id,
+      const { currentPassword, newPassword, passwordConfirm } = data;
+      console.log({ currentPassword, newPassword, passwordConfirm });
+      response = await api.put(`/auth/password`, {
+        currentPassword,
+        newPassword,
+        passwordConfirm,
       });
     } catch (err) {
-      Alert.alert("Failed to edit profile");
+      // console.log(err.response);
+      Alert.alert("Failed to change password");
     }
-    console.log(data);
 
     if (response?.status === 200) {
-      Alert.alert("Update data success", null, [
-        {
-          onPress: () => {
-            loadUser();
-          },
-        },
+      Alert.alert("Update password success", null, [
+        { onPress: () => reset() },
       ]);
     }
   };
@@ -83,19 +79,20 @@ const PersonalInfo = ({ loadUser }) => {
     <ScrollView>
       <Box padding="m">
         <Text variant="body" marginBottom="m">
-          Account Information
+          Change Password
         </Text>
         <Box marginBottom="m">
           <Controller
             control={control}
-            name="name"
+            name="currentPassword"
             render={({
               field: { onChange, onBlur, value },
               fieldState: { isTouched, error },
             }) => (
               <TextInput
-                icon="user"
-                placeholder="Enter your full name"
+                secureTextEntry
+                icon="lock"
+                placeholder="Current password"
                 onBlur={onBlur}
                 onChangeText={onChange}
                 value={value}
@@ -111,14 +108,15 @@ const PersonalInfo = ({ loadUser }) => {
         <Box marginBottom="m">
           <Controller
             control={control}
-            name="email"
+            name="newPassword"
             render={({
               field: { onChange, onBlur, value },
               fieldState: { isTouched, error },
             }) => (
               <TextInput
-                icon="mail"
-                placeholder="Enter your email"
+                secureTextEntry
+                icon="key"
+                placeholder="New password"
                 onBlur={onBlur}
                 onChangeText={onChange}
                 value={value}
@@ -134,14 +132,15 @@ const PersonalInfo = ({ loadUser }) => {
         <Box marginBottom="m">
           <Controller
             control={control}
-            name="address"
+            name="passwordConfirm"
             render={({
               field: { onChange, onBlur, value },
               fieldState: { isTouched, error },
             }) => (
               <TextInput
-                icon="map-pin"
-                placeholder="Address"
+                secureTextEntry
+                icon="key"
+                placeholder="Confirm Password"
                 onBlur={onBlur}
                 onChangeText={onChange}
                 value={value}
@@ -153,12 +152,6 @@ const PersonalInfo = ({ loadUser }) => {
             )}
           />
         </Box>
-        <CheckboxGroup
-          options={gendersData}
-          radio
-          selectedValue={genders}
-          setSelectedValue={setGenders}
-        />
         <Box alignItems="center" marginTop="m">
           <Button
             variant="primary"
@@ -171,4 +164,4 @@ const PersonalInfo = ({ loadUser }) => {
   );
 };
 
-export default PersonalInfo;
+export default EditPassword;
