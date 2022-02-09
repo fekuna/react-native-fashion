@@ -86,15 +86,17 @@ const ProductDetail = ({ route: { params } }) => {
           </Box>
         </Box>
 
-        <Box paddingHorizontal="m" marginTop="s">
-          <Text variant="title3">Size</Text>
-          <CheckboxGroup
-            options={params.sizes}
-            selectedValue={size}
-            setSelectedValue={setSize}
-            radio
-          />
-        </Box>
+        {params.sizes.length > 0 ? (
+          <Box paddingHorizontal="m" marginTop="s">
+            <Text variant="title3">Size</Text>
+            <CheckboxGroup
+              options={params.sizes}
+              selectedValue={size}
+              setSelectedValue={setSize}
+              radio
+            />
+          </Box>
+        ) : null}
 
         <Box paddingHorizontal="m" marginTop="s" paddingBottom="xl">
           <Text variant="title3">About</Text>
@@ -188,7 +190,6 @@ const ProductDetail = ({ route: { params } }) => {
               // validate size selected if product has size
               let allowSubmit = true;
               if (params.sizes.length > 0 && size.length < 1) {
-                console.log("mashook");
                 allowSubmit = false;
                 Alert.alert(null, "Please choose your size");
               }

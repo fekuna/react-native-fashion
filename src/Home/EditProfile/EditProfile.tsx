@@ -25,24 +25,7 @@ const tabs = [
   { id: "password", title: "Password" },
 ];
 
-interface userDataType {
-  id?: string;
-  name?: string;
-  email?: string;
-  address?: string;
-  img?: string;
-  rt_hash?: string;
-}
-
 const EditProfile = ({ navigation }: HomeNavigationProps<"EditProfile">) => {
-  const [userData, setUserData] = useState({
-    id: "",
-    name: "",
-    email: "",
-    address: "",
-    img: "",
-    rt_hash: "",
-  });
   const theme = useTheme();
 
   const user = useSelector((state: RootStateOrAny) => state.auth.user);

@@ -55,7 +55,7 @@ export const cancelOrderItemStatus = (itemId: number) => async (dispatch) => {
       {
         text: "ok",
         onPress: () => {
-          // dispatch(getHistoryTransaction());
+          dispatch(getHistoryTransaction());
         },
       },
     ]);

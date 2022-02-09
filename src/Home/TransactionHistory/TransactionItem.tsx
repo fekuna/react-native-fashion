@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, Image, Alert } from "react-native";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import { useDispatch } from "react-redux";
@@ -9,6 +9,10 @@ import { API_URL } from "../../utils/api";
 const TransactionItem = ({ item }) => {
   console.log("item", item);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    console.log("TransactionItem");
+  }, [item.status?.isAvailable]);
 
   return (
     <Box padding="m" flexDirection="row">

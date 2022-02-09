@@ -17,7 +17,7 @@ const TransactionItemList = ({ route: { params } }) => {
     <View style={{ flex: 1 }}>
       <Header
         dark={false}
-        title="Shopping Cart"
+        title="Order Item List"
         left={{
           icon: "arrow-left",
           onPress: () => {

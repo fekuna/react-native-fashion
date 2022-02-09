@@ -1,4 +1,5 @@
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useFocusEffect } from "@react-navigation/core";
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Alert, ScrollView } from "react-native";
@@ -38,6 +39,8 @@ const personalInfoSchema: SchemaOf<personalInfoFormProps> = object({
 const PersonalInfo = ({ loadUser }) => {
   const user = useSelector((state: RootStateOrAny) => state.auth.user);
 
+  console.log("personal info", user);
+
   const { control, handleSubmit } = useForm<personalInfoFormProps>({
     resolver: yupResolver(personalInfoSchema),
     defaultValues: {
@@ -74,6 +77,12 @@ const PersonalInfo = ({ loadUser }) => {
       ]);
     }
   };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      console.log("hehe");
+    }, [])
+  );
 
   // const user = useSelector((state: RootStateOrAny) => state.auth.user);
 
@@ -149,6 +158,7 @@ const PersonalInfo = ({ loadUser }) => {
                 touched={isTouched}
                 returnKeyType="next"
                 returnKeyLabel="next"
+                defaultValue={user.address}
               />
             )}
           />

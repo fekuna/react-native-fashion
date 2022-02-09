@@ -19,7 +19,7 @@ import {
 import Graph, { DataPoint } from "./Graph/Graph";
 import Transaction from "./Transaction";
 
-const startDate = new Date("09/01/2021").getTime();
+const startDate = new Date("12/01/2021").getTime();
 const numberOfMonths = 6;
 
 // const graphData: DataPoint[] = [
@@ -74,7 +74,6 @@ const TransactionHistory = ({
   );
 
   useEffect(() => {
-    console.log("useEffect nich");
     (async () => {
       if (isFocused) {
         setIsLoading(true);
